@@ -1,11 +1,18 @@
 "use client"
 
+import { useClickOutside } from "@/hooks/clickOutside";
 import Image from "next/image"
 import Link from "next/link"
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const LeftBar = () => {
     const [showDropdown, setShowDropdown] = useState(false);
+
+    const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+    useClickOutside(dropdownRef, () => {
+        setShowDropdown(false);
+    });
 
     return (
         <div
@@ -27,7 +34,7 @@ const LeftBar = () => {
                 >
                     <Image src="/home.svg" alt="Home" width={18} height={18} />
                 </Link>
-                <div onClick={() => setShowDropdown(prev => !prev)} className="relative">
+                <div ref={dropdownRef} onClick={() => setShowDropdown(prev => !prev)} className="relative">
                     <div
                         className="size-12 flex items-center justify-center 
                             hover:bg-[#f1f1f1] cursor-pointer"
