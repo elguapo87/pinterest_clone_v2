@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react'
+import ImageKitWrapper from './ImageKitWrapper';
 
 type GalleryProps = {
     id: number;
@@ -12,12 +12,13 @@ type GalleryProps = {
 const GalleryItem = ({ item }: { item: GalleryProps }) => {
     return (
         <div className="flex relative group" style={{ gridRowEnd: `span ${Math.ceil(item.height / 100)}` }}>
-            <Image
+            <ImageKitWrapper 
                 src={item.media}
-                alt="Gallery-Image"
+                alt="Pin Image"
                 width={item.width}
                 height={item.height}
                 className="w-full rounded-2xl object-cover"
+                imgWidth={400}
             />
 
             <Link

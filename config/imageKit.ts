@@ -6,4 +6,4 @@ const imageKit = new ImageKit({
     urlEndpoint: process.env.NEXT_PUBLIC_URL_ENDPOINT!,
 });
 
-export default imageKit;
+export default imageKit
