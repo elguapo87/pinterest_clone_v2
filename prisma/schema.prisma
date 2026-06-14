@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id          String    @id @default(cuid())
+  displayName String
+  username    String    @unique
+  email       String    @unique
+  password    String
+  avatar      String?
+  pins        Pin[]
+  boards      Board[]
+  comments    Comment[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Pin {
+  id          String    @id @default(cuid())
+  media       String
+  width       Int
+  height      Int
+  title       String
+  description String
+  link        String?
+  tags        String[]
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  boardId     String?
+  board       Board?    @relation(fields: [boardId], references: [id])
+  comments    Comment[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Board {
+  id        String   @id @default(cuid())
+  title     String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  pins      Pin[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Comment {
+  id          String   @id @default(cuid())
+  description String
+  pinId       String
+  pin         Pin      @relation(fields: [pinId], references: [id])
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
