@@ -110,7 +110,7 @@ const Comments = () => {
                     {open && (
                         <div
                             className="absolute right-0 bottom-12.5 max-[751]:bottom-3
-                                max-[751px]:scale-70 max-[751px]:translate-x-[22%]"
+                              max-[751px]:scale-65 max-[751px]:translate-x-[24.5%]"
                         >
                             <EmojiPicker />
                         </div>
