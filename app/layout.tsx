@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Outfit, Ovo, Roboto } from "next/font/google";
 import "./globals.css";
+import AuthContextProvider from "@/context/AuthContext";
+import { Toaster } from "react-hot-toast";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -23,7 +25,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${roboto.className} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <AuthContextProvider>
+          <Toaster />
+          {children}
+        </AuthContextProvider>
+      </body>
     </html>
   );
 }
