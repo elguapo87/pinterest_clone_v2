@@ -9,20 +9,20 @@ type GalleryProps = {
     height: number;
 };
 
-const GalleryItem = ({ item }: { item: GalleryProps }) => {
+const GalleryItem = ({ pin }: { pin: GalleryProps }) => {
     return (
-        <div className="flex relative group" style={{ gridRowEnd: `span ${Math.ceil(item.height / 100)}` }}>
+        <div className="flex relative group" style={{ gridRowEnd: `span ${Math.ceil(pin.height / 100)}` }}>
             <ImageKitWrapper 
-                src={item.media}
+                src={pin.media}
                 alt="Pin Image"
-                width={item.width}
-                height={item.height}
+                width={pin.width}
+                height={pin.height}
                 className="w-full rounded-2xl object-cover"
                 imgWidth={400}
             />
 
             <Link
-                href={`/pin/${item.id}`}
+                href={`/pin/${pin.id}`}
                 className="hidden group-hover:block absolute w-full h-full top-0 left-0
                     bg-[rgba(0,0,0,0.3)] rounded-2xl"
             />
