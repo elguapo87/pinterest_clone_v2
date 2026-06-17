@@ -2,6 +2,7 @@ import imageKit from "@/config/imageKit";
 import { prisma } from "@/lib/prisma";
 import { userAuth } from "@/lib/userAuth";
 import { NextRequest, NextResponse } from "next/server";
+import sharp from "sharp";
 
 export async function POST(req: NextRequest) {
     try {
@@ -15,28 +16,133 @@ export async function POST(req: NextRequest) {
         const tags = form.get("tags") as string;
         const media = form.get("media") as File | null;
 
+        const textOptions = form.get("media") as string;
+        const canvasOptions = form.get("canvasOptions") as string;
+
+        const parsedTextOptions = textOptions ? JSON.parse(textOptions) : null;
+        const parsedCanvasOptions = canvasOptions ? JSON.parse(canvasOptions) : null;
+
         let mediaUrl = "";
         let width = 0;
         let height = 0;
 
-        if (media) {
-            const bytes = await media.arrayBuffer();
-            const buffer = Buffer.from(bytes);
-
-            const uploadRes = await imageKit.upload({
-                file: buffer,
-                fileName: `pin_${user.id}_${Date.now()}_${media.name}`,
-                folder: "/pins"
-            });
-
-            mediaUrl = uploadRes.url;
-            width = uploadRes.width;
-            height = uploadRes.height;
-        }
-
         if (!media) {
             return NextResponse.json({ success: false, message: "Image is required" }, { status: 400 });
         }
+
+        const bytes = await media.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+
+        // ORIGINAL IMAGE METADATA
+        const metadata = await sharp(buffer).metadata();
+
+        const originalWidth = metadata.width || 0;
+        const originalHeight = metadata.height || 0;
+
+        const originalOrientation = originalHeight > originalWidth ? "portrait" : "landscape";
+
+        const originalAspectRatio =
+            originalHeight > 0
+                ? originalWidth / originalHeight
+                : 1;
+
+        // TARGET DIMENSIONS
+        let targetWidth = originalWidth || 0;
+        let targetHeight = originalHeight || 0;
+
+        if (parsedCanvasOptions?.size !== "original") {
+            const [w, h] = parsedCanvasOptions.size.split(":").map(Number);
+
+            const targetAspectRatio = w / h;
+
+            if (parsedCanvasOptions.orientation === "portrait") {
+                targetHeight = originalHeight;
+                targetWidth = Math.round(targetHeight * targetAspectRatio);
+            } else {
+                targetWidth = originalWidth;
+                targetHeight = Math.round(targetWidth / targetAspectRatio);
+            }
+        } else {
+            if (
+                parsedCanvasOptions.orientation !== originalOrientation
+            ) {
+                targetWidth = originalHeight;
+                targetHeight = originalWidth;
+            }
+        }
+
+        // TRANSFORM IMAGE
+        const resizedImageBuffer = await sharp(buffer)
+            .resize({
+                width: targetWidth,
+                height: targetHeight,
+                fit: "contain",
+                background: parsedCanvasOptions.backgroundColor
+            })
+            .toBuffer();
+
+        let finalBuffer = resizedImageBuffer;
+
+        if (parsedTextOptions?.isVisible && parsedTextOptions?.text) {
+            const escapeXml = (unsafe: string) => {
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&apos;");
+            };
+
+            const scaleX = targetWidth / parsedCanvasOptions.width;
+            const scaleY = targetHeight / parsedCanvasOptions.height;
+
+            const textLeft = parsedTextOptions.left * scaleX;
+            const textTop = parsedTextOptions.top * scaleY;
+            const fontSize = parsedTextOptions.fontSize * scaleX;
+
+            const svgText = `
+                <svg width="${targetWidth}" height="${targetHeight}">
+                    <style>
+                        .title {
+                            fill: ${parsedTextOptions.color};
+                            font-size: ${fontSize}px;
+                            font-weight: bold;
+                            font-family: Arial, sans-serif;
+                        }
+                    </style>
+
+                    <text
+                        x="${textLeft}"
+                        y="${textTop + fontSize}"
+                        class="title"
+                    >
+                        ${escapeXml(parsedTextOptions.text)}
+                    </text>
+                </svg>
+            `;
+
+            finalBuffer = await sharp(resizedImageBuffer)
+                .composite([
+                    {
+                        input: Buffer.from(svgText),
+                        top: 0,
+                        left: 0,
+                    }
+                ])
+                .png()
+                .toBuffer();
+        }
+
+        const uploadRes = await imageKit.upload({
+            file: finalBuffer,
+            fileName: `pin_${user.id}_${Date.now()}_${media.name}`,
+            folder: "/pinterest_clone/pins"
+        })
+
+        mediaUrl = uploadRes.url;
+
+        width = targetWidth;
+        height = targetHeight;
 
         let boardId: string | null = null;
 
@@ -62,7 +168,9 @@ export async function POST(req: NextRequest) {
                 height,
                 tags: parsedTags,
                 userId: user.id,
-                boardId
+                boardId,
+                textOptions: parsedTextOptions,
+                canvasOptions: parsedCanvasOptions
             }
         });
 
