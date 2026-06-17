@@ -5,7 +5,7 @@ import Loader from "../Loader";
 
 export default function GuestGuard({ children }: { children: React.ReactNode }) {
     const authContext = useContext(AuthContext);
-    if (!authContext) throw new Error("AuthContext must be within AuthContextProvider");
+    if (!authContext) throw new Error("GuestGuard must be within AuthContextProvider");
     const { user, loading } = authContext;
 
     const router = useRouter();
@@ -16,7 +16,7 @@ export default function GuestGuard({ children }: { children: React.ReactNode }) 
         }
     }, [user, loading, router]);
 
-    if (loading) return <Loader />
+    if (loading && user) return <Loader />
 
     return <>{children}</>
 }
