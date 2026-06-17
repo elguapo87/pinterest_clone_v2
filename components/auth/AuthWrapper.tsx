@@ -10,7 +10,6 @@ const AuthWrapper = () => {
     if (!authContext) throw new Error("AuthWrapper must be within AuthContextProvider");
     const { register, login, authLoading } = authContext;
 
-
     const [username, setUsername] = useState("");
     const [displayName, setDisplayName] = useState("");
     const [email, setEmail] = useState("");

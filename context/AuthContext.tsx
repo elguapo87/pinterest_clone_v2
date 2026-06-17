@@ -117,7 +117,7 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
             if (data.success) {
                 setUser(null);
                 toast.success(data.message);
-                router.replace("/login");
+                router.replace("/");
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {

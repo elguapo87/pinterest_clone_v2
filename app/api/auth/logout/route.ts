@@ -10,5 +10,5 @@ export async function POST() {
         httpOnly: true
     });
 
-    return NextResponse.json({ success: true }, { status: 200 });
+    return NextResponse.json({ success: true, message: "Logged out successfully" }, { status: 200 });
 }
