@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
             }
         });
 
-        return NextResponse.json({ success: true, pin }, { status: 201 });
+        return NextResponse.json({ success: true, message: "Pin added", pin }, { status: 201 });
 
     } catch (error) {
         return NextResponse.json({ success: false, message: "Failed to create pin" }, { status: 500 });
