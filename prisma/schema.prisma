@@ -29,6 +29,8 @@ model Pin {
   description String
   link        String?
   tags        String[]
+  textOptions Json?
+  canvasOptions Json?
   userId      String
   user        User      @relation(fields: [userId], references: [id])
   boardId     String?
@@ -58,3 +60,4 @@ model Comment {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
