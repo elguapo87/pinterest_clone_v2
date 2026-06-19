@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import GalleryItem from "./GalleryItem";
 import api from "@/lib/axios";
 import axios from "axios";
@@ -15,32 +15,87 @@ type Pin = {
 };
 
 const Gallery = () => {
-  
+
   const [pins, setPins] = useState<Pin[]>([]);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
+
+  const loaderRef = useRef<HTMLDivElement | null>(null);
+
+  const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
+  const fetchPins = async () => {
+    if (loading || !hasMore) return;
+
+    try {
+      setLoading(true);
+
+      await delay(800);
+
+      const lastPin = pins[pins.length - 1];
+
+      const { data } = await api.get("/pins/fetchPins", {
+        params: {
+          cursor: lastPin?.id
+        }
+      });
+      if (data.success) {
+        setPins((prev) => {
+          const newPins = data.pins.filter(
+            (pin: Pin) => !prev.some((p) => p.id === pin.id)
+          )
+          return [...prev, ...newPins];
+        });
+
+        if (data.pins.length < 21) {
+          setHasMore(false);
+        }
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message);
+      }
+    } finally {
+      setLoading(false);
+      setInitialLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchPins = async () => {
-      try {
-        setLoading(true);
-
-        const { data } = await api.get("/pins/fetchPins");
-        if (data.success) {
-          setPins(data.pins);
-        }
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          toast.error(error.response?.data?.message);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchPins();
   }, []);
 
-  if (loading) return <Loader />
+  // infinite scroll observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchPins();
+        }
+      },
+      {
+        threshold: 1
+      }
+    );
+
+    const current = loaderRef.current;
+
+    if (current) observer.observe(current);
+
+    return () => {
+      if (current) observer.unobserve(current);
+    }
+  }, [loading, hasMore]);
+
+  // 🔥 full page loader ONLY for first load
+  if (initialLoading) {
+     return (
+      <div className="w-full flex justify-center py-20">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -53,7 +108,17 @@ const Gallery = () => {
           <GalleryItem key={pin.id} pin={pin} />
         ))
       ) : (
-        <p className="text-xl text-gray-600">No pins added yet</p>
+        <p className="col-span-full text-center text-xl text-gray-600">No pins yet</p>
+      )}
+
+      {/* SENTINEL */}
+      <div ref={loaderRef} />
+
+      {/* BOTTOM LOADER */}
+      {loading && !initialLoading && (
+        <div className="col-span-full flex justify-center py-4">
+          <Loader />
+        </div>
       )}
     </div>
   )

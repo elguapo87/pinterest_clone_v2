@@ -1,9 +1,17 @@
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     try {
+        const { searchParams } = new URL(req.url);
+
+        const cursor = searchParams.get("cursor");
+
         const pins = await prisma.pin.findMany({
+            ...(cursor && {
+                skip: 1,
+                cursor: { id: cursor }
+            }),
             orderBy: {
                 createdAt: "desc"
             },
@@ -17,7 +25,7 @@ export async function GET() {
                 },
                 board: true
             },
-            take: 20
+            take: 21
         });
 
         return NextResponse.json({ success: true, pins }, { status: 200 });
