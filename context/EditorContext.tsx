@@ -26,7 +26,6 @@ interface EditorContextType {
     setTextOptions: React.Dispatch<React.SetStateAction<TextOptions>>;
     canvasOptions: CanvasOptions;
     setCanvasOptions: React.Dispatch<React.SetStateAction<CanvasOptions>>;
-    changeLayer: (newLayer: string) => void;
     changeTextOptions: (newOption: Partial<TextOptions>) => void;
     addText: () => void;
     changeCanvasOptions: (newOption: Partial<CanvasOptions>) => void;
@@ -55,10 +54,6 @@ const EditorContextProvider = ({ children }: { children: React.ReactNode }) => {
         backgroundColor: "#008080"
     });
 
-    const changeLayer = (newLayer: string) => {
-        setSelectedLayer(newLayer);
-    };
-
     const changeTextOptions = (newOption: Partial<TextOptions>) => {
         setTextOptions((prev) => ({
             ...prev,
@@ -68,12 +63,12 @@ const EditorContextProvider = ({ children }: { children: React.ReactNode }) => {
 
     const addText = () => {
         setTextOptions({
-            text: "",
+            text: "Add Text",
             fontSize: 48,
             color: "#000000",
             top: 48,
             left: 0,
-            isVisible: false
+            isVisible: true
         });
     };
 
@@ -88,7 +83,6 @@ const EditorContextProvider = ({ children }: { children: React.ReactNode }) => {
         selectedLayer, setSelectedLayer,
         textOptions, setTextOptions,
         canvasOptions, setCanvasOptions,
-        changeLayer,
         changeTextOptions,
         addText,
         changeCanvasOptions

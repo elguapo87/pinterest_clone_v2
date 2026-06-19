@@ -9,6 +9,7 @@ import api from "@/lib/axios";
 import axios from "axios";
 import toast from "react-hot-toast";
 import PinEditor from "./pinEditor/PinEditor";
+import { EditorContext } from "@/context/EditorContext";
 
 type Board = {
     id: string;
@@ -20,6 +21,10 @@ const CreatePageWrapper = () => {
     if (!authContext) throw new Error("CreatePageWrapper must be within AuthContextProvider");
     const { user } = authContext;
 
+    const editorContext = useContext(EditorContext);
+    if (!editorContext) throw new Error("CreatePageWrapper must be within EditorContextProvider");
+    const { textOptions, canvasOptions } = editorContext;
+
     const [media, setMedia] = useState<File | null>(null);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -27,6 +32,12 @@ const CreatePageWrapper = () => {
     const [boards, setBoards] = useState<Board[]>([]);
     const [selectedBoard, setSelectedBoard] = useState("");
     const [tags, setTags] = useState("");
+
+    const [previewImage, setPreviewImage] = useState<{
+        url: string;
+        width: number;
+        height: number
+    } | null>(null);
 
     const [loading, setLoading] = useState(false);
 
@@ -53,34 +64,64 @@ const CreatePageWrapper = () => {
 
     const handleCreate = async (e: React.SyntheticEvent) => {
         e.preventDefault();
-        
-        try {
-            setLoading(true)
 
-            const formData = new FormData();
-            formData.append("title", title);
-            formData.append("description", description);
-            formData.append("link", link);
-            formData.append("board", selectedBoard);
-            formData.append("tags", tags);
+        if (isEditing) {
+            setIsEditing(false);
 
-            if (media) {
-                formData.append("media", media);
+        } else {
+            try {
+                setLoading(true)
+    
+                const formData = new FormData();
+                formData.append("title", title);
+                formData.append("description", description);
+                formData.append("link", link);
+                formData.append("board", selectedBoard);
+                formData.append("tags", tags);
+                formData.append("textOptions", JSON.stringify(textOptions));
+                formData.append("canvasOptions", JSON.stringify(canvasOptions));
+    
+                if (media) {
+                    formData.append("media", media);
+                }
+    
+                const { data } = await api.post("/pins/create", formData);
+                if (data.success) {
+                    toast.success(data.message);
+                    router.push("/");
+                }
+            } catch (error) {
+                if (axios.isAxiosError(error)) {
+                    toast.error(error.response?.data?.message);
+                }
+            } finally {
+                setLoading(false);
             }
-
-            const {data} = await api.post("/pins/create", formData);
-            if (data.success) {
-                toast.success(data.message);
-                router.push("/");
-            }
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                toast.error(error.response?.data?.message);
-            }
-        } finally {
-            setLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (!media) return;
+
+        const imageUrl = URL.createObjectURL(media);
+
+        const img = new window.Image();
+
+        img.src = imageUrl;
+
+        img.onload = () => {
+            setPreviewImage({
+                url: imageUrl,
+                width: img.width,
+                height: img.height
+            });
+        };
+
+        return () => {
+            URL.revokeObjectURL(imageUrl);
+        }
+
+    }, [media]);
 
     return (
         <AuthGuard>
@@ -91,7 +132,8 @@ const CreatePageWrapper = () => {
                     <button
                         type="submit"
                         className="bg-[#e50829] text-white font-medium border-none outline-none py-3 px-4
-                        rounded-4xl cursor-pointer text-[15px] hover:bg-[#c1011e]"
+                            rounded-4xl cursor-pointer text-[15px] hover:bg-[#c1011e]"
+                        disabled={loading}
                     >
                         {
                             loading
@@ -103,8 +145,8 @@ const CreatePageWrapper = () => {
                     </button>
                 </div>
 
-                {isEditing ? (
-                    <PinEditor />
+                {isEditing && previewImage ? (
+                    <PinEditor previewImage={previewImage} />
                 ) : (
                     < div
                         className="mt-8 flex justify-center gap-16 max-[1104px]:flex-col
@@ -246,7 +288,7 @@ const CreatePageWrapper = () => {
                             <div className="flex flex-col gap-2">
                                 <label htmlFor="tags" className="text-[13px] text-gray-600 ">Tagged topics</label>
                                 <input
-                                    onChange={(e) => setTags(e.target.value)}  
+                                    onChange={(e) => setTags(e.target.value)}
                                     value={tags}
                                     className="text-[15px] border-2 border-[#e9e9e9] p-4 rounded-2xl"
                                     type="text"

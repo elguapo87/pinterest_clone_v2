@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
         const tags = form.get("tags") as string;
         const media = form.get("media") as File | null;
 
-        const textOptions = form.get("media") as string;
+        const textOptions = form.get("textOptions") as string;
         const canvasOptions = form.get("canvasOptions") as string;
 
         const parsedTextOptions = textOptions ? JSON.parse(textOptions) : null;
