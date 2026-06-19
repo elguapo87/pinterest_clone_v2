@@ -46,6 +46,9 @@ const CreatePageWrapper = () => {
     const router = useRouter();
 
     useEffect(() => {
+
+        if (!user) return;
+
         const fetchBoards = async () => {
             try {
                 const { data } = await api.get("/boards/userBoards");

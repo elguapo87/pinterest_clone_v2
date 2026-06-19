@@ -6,7 +6,7 @@ import PostInteractions from "@/components/PostInteractions";
 import api from "@/lib/axios";
 import axios from "axios";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Loader from "./Loader";
@@ -34,6 +34,8 @@ const PostWrapper = () => {
 
     const [pin, setPin] = useState<Pin | null>(null);
 
+    const router = useRouter();
+
     useEffect(() => {
         if (!id) return;
 
@@ -59,6 +61,7 @@ const PostWrapper = () => {
     return (
         <div className="flex justify-center max-[751]:gap-2 gap-8">
             <svg
+                onClick={() => router.back()}
                 height="20"
                 viewBox="0 0 24 24"
                 width="20"
