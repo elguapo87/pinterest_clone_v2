@@ -14,7 +14,7 @@ type Pin = {
   height: number;
 };
 
-const Gallery = () => {
+const Gallery = ({ search }: { search?: string }) => {
 
   const [pins, setPins] = useState<Pin[]>([]);
   const [loading, setLoading] = useState(false);
@@ -25,32 +25,33 @@ const Gallery = () => {
 
   const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
-  const fetchPins = async () => {
-    if (loading || !hasMore) return;
+  const fetchPins = async (isNewSearch = false) => {
+    if (loading || (!hasMore && !isNewSearch)) return;
 
     try {
       setLoading(true);
 
       await delay(800);
 
-      const lastPin = pins[pins.length - 1];
+      const lastPin = isNewSearch ? null : pins[pins.length - 1];
 
       const { data } = await api.get("/pins/fetchPins", {
         params: {
-          cursor: lastPin?.id
+          cursor: lastPin?.id,
+          search
         }
       });
       if (data.success) {
         setPins((prev) => {
+          if (isNewSearch) return data.pins;
+
           const newPins = data.pins.filter(
             (pin: Pin) => !prev.some((p) => p.id === pin.id)
           )
           return [...prev, ...newPins];
         });
 
-        if (data.pins.length < 21) {
-          setHasMore(false);
-        }
+        setHasMore(data.pins.length === 21);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -63,8 +64,17 @@ const Gallery = () => {
   };
 
   useEffect(() => {
-    fetchPins();
-  }, []);
+    const init = async () => {
+      setPins([]);
+      setHasMore(true);
+      setInitialLoading(true);
+
+      await fetchPins(true)
+    }
+
+    init();
+  }, [search]);
+
 
   // infinite scroll observer
   useEffect(() => {
@@ -90,7 +100,7 @@ const Gallery = () => {
 
   // 🔥 full page loader ONLY for first load
   if (initialLoading) {
-     return (
+    return (
       <div className="w-full flex justify-center py-20">
         <Loader />
       </div>
@@ -103,13 +113,17 @@ const Gallery = () => {
         max-[1272px]:grid-cols-4 max-[1509px]:grid-cols-5 max-[1746px]:grid-cols-6
         min-[1746px]:grid-cols-7 gap-4 auto-rows-[10px]"
     >
-      {pins.length > 0 ? (
-        pins.map((pin) => (
-          <GalleryItem key={pin.id} pin={pin} />
-        ))
-      ) : (
-        <p className="col-span-full text-center text-xl text-gray-600">No pins yet</p>
-      )}
+      {
+        pins.length === 0 ? (
+          <p className="col-span-full text-center text-xl text-gray-600">
+            No results found
+          </p>
+        ) : (
+          pins.map((pin) => (
+            <GalleryItem key={pin.id} pin={pin} />
+          ))
+        )
+      }
 
       {/* SENTINEL */}
       <div ref={loaderRef} />

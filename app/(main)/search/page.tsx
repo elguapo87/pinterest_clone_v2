@@ -1,9 +1,7 @@
-import Gallery from "@/components/Gallery"
+import ClientSearch from "@/components/ClientSearch"
 
 const Search = () => {
-  return (
-    <Gallery />
-  )
+  return <ClientSearch />
 }
 
 export default Search

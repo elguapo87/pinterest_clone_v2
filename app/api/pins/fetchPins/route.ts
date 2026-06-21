@@ -6,12 +6,21 @@ export async function GET(req: NextRequest) {
         const { searchParams } = new URL(req.url);
 
         const cursor = searchParams.get("cursor");
+        const search = searchParams.get("search");
 
         const pins = await prisma.pin.findMany({
             ...(cursor && {
                 skip: 1,
                 cursor: { id: cursor }
             }),
+            where: search
+                ? {
+                    OR: [
+                        { title: { contains: search, mode: "insensitive" } },
+                        { description: { contains: search, mode: "insensitive" } },
+                        { tags: { has: search } }
+                    ]
+                } : {},
             orderBy: {
                 createdAt: "desc"
             },

@@ -44,7 +44,6 @@ const PostWrapper = () => {
                 const { data } = await api.get(`/pins/${id}`);
                 if (data.success) {
                     setPin(data.pin);
-                    console.log(data.pin);
                 }
             } catch (error) {
                 if (axios.isAxiosError(error)) {
