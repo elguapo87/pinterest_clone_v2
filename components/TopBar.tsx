@@ -13,7 +13,7 @@ const TopBar = () => {
     const router = useRouter();
 
     const searchParams = useSearchParams();
-    
+
     useEffect(() => {
         if (!initialized) {
             setInitialized(true);

@@ -20,6 +20,7 @@ export async function GET(req: NextRequest) {
                         { description: { contains: search, mode: "insensitive" } },
                         { tags: { has: search } }
                     ]
+
                 } : {},
             orderBy: {
                 createdAt: "desc"

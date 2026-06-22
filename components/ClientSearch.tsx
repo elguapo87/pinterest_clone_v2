@@ -6,11 +6,11 @@ import Gallery from "./Gallery";
 const ClientSearch = () => {
     const searchParams = useSearchParams();
 
-    const search = searchParams.get("search");
+    const search = searchParams.get("search") || "";
 
     return (
         <div>
-            <Gallery search={search || ""} />
+            <Gallery search={search} />
         </div>
     )
 }

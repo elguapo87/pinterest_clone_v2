@@ -75,7 +75,6 @@ const Gallery = ({ search }: { search?: string }) => {
     init();
   }, [search]);
 
-
   // infinite scroll observer
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -113,8 +112,8 @@ const Gallery = ({ search }: { search?: string }) => {
         max-[1272px]:grid-cols-4 max-[1509px]:grid-cols-5 max-[1746px]:grid-cols-6
         min-[1746px]:grid-cols-7 gap-4 auto-rows-[10px]"
     >
-      {
-        pins.length === 0 ? (
+      { 
+        pins.length === 0 ? (                                                                          
           <p className="col-span-full text-center text-xl text-gray-600">
             No results found
           </p>
