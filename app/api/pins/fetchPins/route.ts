@@ -7,21 +7,45 @@ export async function GET(req: NextRequest) {
 
         const cursor = searchParams.get("cursor");
         const search = searchParams.get("search");
+        const boardId = searchParams.get("boardId");
+
+        const whereClause: any = {};
+
+        if (search) {
+            whereClause.OR = [
+                {
+                    title: {
+                        contains: search,
+                        mode: "insensitive"
+                    }
+                },
+                {
+                    description: {
+                        contains: search,
+                        mode: "insensitive"
+                    }
+                },
+                {
+                    tags: {
+                        has: search
+                    }
+                }
+
+            ]
+        }
+
+        if (boardId) {
+            whereClause.boardId = boardId;
+        }
 
         const pins = await prisma.pin.findMany({
             ...(cursor && {
                 skip: 1,
                 cursor: { id: cursor }
             }),
-            where: search
-                ? {
-                    OR: [
-                        { title: { contains: search, mode: "insensitive" } },
-                        { description: { contains: search, mode: "insensitive" } },
-                        { tags: { has: search } }
-                    ]
 
-                } : {},
+            where: whereClause,
+            
             orderBy: {
                 createdAt: "desc"
             },

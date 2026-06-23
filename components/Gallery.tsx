@@ -17,9 +17,10 @@ type Pin = {
 type GalleryProps = {
   search?: string;
   initialPins?: Pin[];
+  boardId?: string;
 };
 
-const Gallery = ({ search, initialPins }: GalleryProps) => {
+const Gallery = ({ search, initialPins, boardId }: GalleryProps) => {
 
   const [pins, setPins] = useState<Pin[]>(initialPins || []);
   const [loading, setLoading] = useState(false);
@@ -38,12 +39,13 @@ const Gallery = ({ search, initialPins }: GalleryProps) => {
 
       await delay(800);
 
-      const lastPin = isNewSearch ? null : pins[pins.length - 1];
+      const lastPin = isNewSearch || pins.length === 0 ? null : pins.at(-1);
 
       const { data } = await api.get("/pins/fetchPins", {
         params: {
           cursor: lastPin?.id,
-          search
+          search,
+          boardId
         }
       });
       if (data.success) {
@@ -86,7 +88,7 @@ const Gallery = ({ search, initialPins }: GalleryProps) => {
     };
 
     init();
-  }, [search, initialPins]);
+  }, [search, initialPins, boardId]);
 
   // infinite scroll observer
   useEffect(() => {
@@ -128,7 +130,11 @@ const Gallery = ({ search, initialPins }: GalleryProps) => {
       {
         pins.length === 0 ? (
           <p className="col-span-full text-center text-xl text-gray-600">
-            No results found
+            {boardId
+              ? "This board has no pins yet"
+              : search
+                ? "No results found"
+                : "No pins yet"}
           </p>
         ) : (
           pins.map((pin) => (

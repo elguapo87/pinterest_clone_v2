@@ -1,3 +1,4 @@
+import Link from "next/link";
 import ImageKitWrapper from "./ImageKitWrapper"
 import { format } from "timeago.js"
 
@@ -26,7 +27,7 @@ const Collection = ({ boards }: { boards: Board }) => {
         >
             {/* COLLECTION */}
             {boards.map((board) => (
-                <div key={board.id} className="mb-8 cursor-pointer">
+                <Link href={`/search?boardId=${board.id}`} key={board.id} className="mb-8 cursor-pointer">
                     <ImageKitWrapper
                         src={board.pins[0]?.media || "/pinterest_clone/general/empty-board.png"}
                         alt="Pin-Image"
@@ -42,7 +43,7 @@ const Collection = ({ boards }: { boards: Board }) => {
                             {board._count.pins} Pins &bull; {format(board.createdAt)}
                         </span>
                     </div>
-                </div>
+                </Link>
 
             ))}
         </div>
