@@ -8,15 +8,20 @@ import toast from "react-hot-toast";
 import Loader from "./Loader";
 
 type Pin = {
-  id: number;
+  id: string;
   media: string;
   width: number;
   height: number;
 };
 
-const Gallery = ({ search }: { search?: string }) => {
+type GalleryProps = {
+  search?: string;
+  initialPins?: Pin[];
+};
 
-  const [pins, setPins] = useState<Pin[]>([]);
+const Gallery = ({ search, initialPins }: GalleryProps) => {
+
+  const [pins, setPins] = useState<Pin[]>(initialPins || []);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
@@ -64,16 +69,24 @@ const Gallery = ({ search }: { search?: string }) => {
   };
 
   useEffect(() => {
+    // profile page mode                     
+    if (initialPins) {
+      setPins(initialPins);
+      setInitialLoading(false);
+      setHasMore(false);
+      return;
+    }
+
     const init = async () => {
       setPins([]);
       setHasMore(true);
       setInitialLoading(true);
 
       await fetchPins(true)
-    }
+    };
 
     init();
-  }, [search]);
+  }, [search, initialPins]);
 
   // infinite scroll observer
   useEffect(() => {
@@ -112,8 +125,8 @@ const Gallery = ({ search }: { search?: string }) => {
         max-[1272px]:grid-cols-4 max-[1509px]:grid-cols-5 max-[1746px]:grid-cols-6
         min-[1746px]:grid-cols-7 gap-4 auto-rows-[10px]"
     >
-      { 
-        pins.length === 0 ? (                                                                          
+      {
+        pins.length === 0 ? (
           <p className="col-span-full text-center text-xl text-gray-600">
             No results found
           </p>

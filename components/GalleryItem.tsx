@@ -3,7 +3,7 @@ import Link from 'next/link';
 import ImageKitWrapper from './ImageKitWrapper';
 
 type GalleryProps = {
-    id: number;
+    id: string;
     media: string;
     width: number;
     height: number;

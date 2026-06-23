@@ -1,27 +1,97 @@
 "use client"
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ImageKitWrapper from "./ImageKitWrapper";
 import Image from "next/image";
 import Gallery from "./Gallery";
 import Collection from "./Collection";
+import { useParams } from "next/navigation";
+import api from "@/lib/axios";
+import axios from "axios";
+import toast from "react-hot-toast";
+import Loader from "./Loader";
+
+type Profile = {
+    id: string;
+    username: string;
+    displayName: string;
+    avatar: string;
+    createdAt: string | Date;
+    updatedAt: string | Date;
+    pins: {
+        boardId: string;
+        id: string;
+        media: string;
+        width: number;
+        height: number;
+        title: string;
+        description: string;
+        link?: string;
+        tags: string[];
+    }[];
+    boards: {
+        id: string;
+        title: string;
+        userId: string;
+        createdAt: string;
+        pins: {
+            id: string;
+            media: string;
+            width: number;
+            height: number;
+        }[];
+        _count: {
+            pins: number;
+        };
+    }[];
+};
 
 const ProfilePageWrapper = () => {
 
+    const { username } = useParams() as { username: string };
+
+    const [profile, setProfile] = useState<Profile | null>(null);
     const [type, setType] = useState("saved");
 
-    return (
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (!username) return;
+
+        const fetchUser = async () => {
+            try {
+                setLoading(true);
+                const { data } = await api.get(`/user/${username}`);
+
+                if (data.success) {
+                    setProfile(data.profile);
+                }
+            } catch (error) {
+                if (axios.isAxiosError(error)) {
+                    toast.error(error.response?.data?.message);
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUser();
+    }, [username]);
+
+    if (!profile && loading) return null;
+
+    return profile ? (
         <div className="flex flex-col items-center gap-4">
             <ImageKitWrapper
-                src="/general/noAvatar.png"
+                src={profile.avatar || "/general/noAvatar.png"}
                 alt="User Avatar"
                 width={100}
                 height={100}
                 imgWidth={100}
                 className="size-25 rounded-full object-cover"
             />
-            <h1 className="text-4xl font-medium">John Doe</h1>
-            <span className="font-light text-gray-600">@johndoe</span>
+            <h1 className="text-4xl font-medium">{profile.username}</h1>
+            <span className="font-light text-gray-600">@{profile.displayName}</span>
             <div className="font-medium">10 followers &bull; 20 followings</div>
             {/* PROFILE INTERACTIONS */}
             <div className="flex items-center gap-8">
@@ -60,11 +130,13 @@ const ProfilePageWrapper = () => {
             </div>
 
             {type === "created" ? (
-                <Gallery />
+                <Gallery initialPins={profile.pins} />
             ) : (
-                <Collection />
+                <Collection boards={profile.boards} />
             )}
         </div>
+    ) : (
+        <Loader />
     )
 }
 

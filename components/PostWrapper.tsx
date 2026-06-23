@@ -91,7 +91,7 @@ const PostWrapper = () => {
                 <div className="flex-1 h-full flex flex-col gap-8 p-4 overflow-hidden">
                     <PostInteractions />
                     {/* POST USER */}
-                    <Link href="/john" className="flex items-center gap-2 ">
+                    <Link href={`/profile/${pin.user.username}`} className="flex items-center gap-2 ">
                         <ImageKitWrapper
                             src={pin.user.avatar || "/general/noAvatar.png"}
                             alt="User Avatar"
