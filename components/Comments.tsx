@@ -9,6 +9,7 @@ import toast from "react-hot-toast"
 import { AuthContext } from "@/context/AuthContext"
 import { format } from "timeago.js"
 import { useClickOutside } from "@/hooks/clickOutside"
+import Image from "next/image"
 
 type Comment = {
     id: string;
@@ -80,6 +81,27 @@ const Comments = ({ pinId }: { pinId: string }) => {
         }
     };
 
+    const handleDelete = async (id: string) => {
+        try {
+            const confirmation = window.confirm("Are you sure you want to delete this comment?");
+            if (!confirmation) return;
+
+            const {data} = await api.delete("/comments/delete", {
+                params: {
+                    id
+                }
+            });
+
+            if (data.success) {
+                setComments((prev) => prev.filter((c) => c.id !== id));
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                toast.error(error.response?.data?.message);
+            }
+        }
+    };
+
     useClickOutside(emojiRef, () => {
         setOpen(false);
     });
@@ -109,6 +131,20 @@ const Comments = ({ pinId }: { pinId: string }) => {
                             <p className="text-[15px] font-medium text-slate-800">{comment.description}</p>
                             <span className="text-[10px] font-light text-slate-600">{format(comment.createdAt)}</span>
                         </div>
+                        {user?.id === comment.userId && (
+                            <button
+                               onClick={(e) => { e.stopPropagation(); handleDelete(comment.id); }}
+                                className="ml-auto mt-5 mr-3 cursor-pointer hover:scale-105"
+                            >
+                                <Image 
+                                    src="/delete.svg"
+                                    alt="Delete Icon"
+                                    width={18}
+                                    height={18}
+                                    className="size-4 md:size-4.5"
+                                />
+                            </button>
+                        )}
                     </div>
                 ))}
             </div>
