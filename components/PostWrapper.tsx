@@ -103,7 +103,7 @@ const PostWrapper = () => {
                         <span className="text-sm">{pin.user.username}</span>
                     </Link>
 
-                    <Comments />
+                    <Comments pinId={id} />
                 </div>
             </div>
         </div>
