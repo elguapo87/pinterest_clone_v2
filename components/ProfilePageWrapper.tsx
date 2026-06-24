@@ -125,7 +125,7 @@ const ProfilePageWrapper = () => {
                     className={`cursor-pointer py-1 px-0 hover:text-gray-600 
                         ${type === "saved" ? "border-b-3 border-black" : ""}`}
                 >
-                    Collection
+                    Boards
                 </span>
             </div>
 
