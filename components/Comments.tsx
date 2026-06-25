@@ -86,7 +86,7 @@ const Comments = ({ pinId }: { pinId: string }) => {
             const confirmation = window.confirm("Are you sure you want to delete this comment?");
             if (!confirmation) return;
 
-            const {data} = await api.delete("/comments/delete", {
+            const { data } = await api.delete("/comments/delete", {
                 params: {
                     id
                 }
@@ -112,7 +112,10 @@ const Comments = ({ pinId }: { pinId: string }) => {
             <div className="flex-1 flex flex-col gap-4 overflow-y-auto overflow-x-hidden">
                 {/* COUNT */}
                 <span className="">
-                    {comments.length === 0 ? "No comments" : comments.length + " comments"}
+                    {comments.length === 0
+                        ? "No comments"
+                        : `${comments.length} ${comments.length === 1 ? "Comment" : "Comments"}` 
+                        }
                 </span>
                 {/* COMMENT */}
                 {comments.map((comment) => (
@@ -133,10 +136,10 @@ const Comments = ({ pinId }: { pinId: string }) => {
                         </div>
                         {user?.id === comment.userId && (
                             <button
-                               onClick={(e) => { e.stopPropagation(); handleDelete(comment.id); }}
+                                onClick={(e) => { e.stopPropagation(); handleDelete(comment.id); }}
                                 className="ml-auto mt-5 mr-3 cursor-pointer hover:scale-105"
                             >
-                                <Image 
+                                <Image
                                     src="/delete.svg"
                                     alt="Delete Icon"
                                     width={18}

@@ -16,6 +16,8 @@ model User {
   pins        Pin[]
   boards      Board[]
   comments    Comment[]
+  followers   Follow[]  @relation("followers")
+  followings  Follow[]  @relation("followings")
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -59,4 +61,16 @@ model Comment {
   user        User     @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  followers   User     @relation("followings", fields: [followerId], references: [id])
+  followings  User     @relation("followers", fields: [followingId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([followerId, followingId])
 }
