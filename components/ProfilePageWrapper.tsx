@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ImageKitWrapper from "./ImageKitWrapper";
 import Image from "next/image";
 import Gallery from "./Gallery";
@@ -10,6 +10,7 @@ import api from "@/lib/axios";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Loader from "./Loader";
+import { AuthContext } from "@/context/AuthContext";
 
 type Profile = {
     id: string;
@@ -47,6 +48,9 @@ type Profile = {
 };
 
 const ProfilePageWrapper = () => {
+    const authContext = useContext(AuthContext);
+    if (!authContext) throw new Error("ProfilePageWrapper must be within AuthContextProvider");
+    const { user } = authContext;
 
     const { username } = useParams() as { username: string };
 
@@ -54,6 +58,11 @@ const ProfilePageWrapper = () => {
     const [type, setType] = useState("saved");
 
     const [loading, setLoading] = useState(false);
+
+    const [isFollowing, setIsFollowing] = useState<boolean | null>(null);
+    const [followersCount, setFollowersCount] = useState(0);
+    const [followingsCount, setFollowingsCount] = useState(0);
+    const [loadingFollow, setLoadingFollow] = useState(false);
 
     useEffect(() => {
         if (!username) return;
@@ -65,6 +74,7 @@ const ProfilePageWrapper = () => {
 
                 if (data.success) {
                     setProfile(data.profile);
+                    setIsFollowing(data.isFollowing);
                 }
             } catch (error) {
                 if (axios.isAxiosError(error)) {
@@ -77,6 +87,56 @@ const ProfilePageWrapper = () => {
 
         fetchUser();
     }, [username]);
+
+    useEffect(() => {
+        if (!username) return;
+
+        const fetchFollowData = async () => {
+            try {
+                const { data } = await api.get(`/user/count?username=${username}`);
+
+                if (data.success) {
+                    setFollowersCount(data.followersCount);
+                    setFollowingsCount(data.followingsCount)
+                }
+            } catch (error) {
+                if (axios.isAxiosError(error)) {
+                    toast.error(error.response?.data?.message);
+                }
+            }
+        };
+
+        fetchFollowData();
+    }, [username]);
+
+    const handleFollow = async () => {
+        const prevState = isFollowing;
+        setIsFollowing(prev => !prev);
+
+        setLoadingFollow(true);
+
+        if (isFollowing) {
+            setFollowersCount(prev => prev - 1);
+        } else {
+            setFollowersCount(prev => prev + 1);
+        }
+
+        try {
+            const { data } = await api.post(`/user/follow?username=${username}`);
+
+            if (data.success) {
+                setIsFollowing(data.isFollowing);
+            }
+        } catch (error) {
+            setIsFollowing(prevState);
+
+            if (axios.isAxiosError(error)) {
+                toast.error(error.response?.data?.message);
+            }
+        } finally {
+            setLoadingFollow(false);
+        }
+    };
 
     if (!profile && loading) return null;
 
@@ -92,7 +152,9 @@ const ProfilePageWrapper = () => {
             />
             <h1 className="text-4xl font-medium">{profile.username}</h1>
             <span className="font-light text-gray-600">@{profile.displayName}</span>
-            <div className="font-medium">10 followers &bull; 20 followings</div>
+            <div className="font-medium">
+                {followersCount} followers &bull; {followingsCount} followings
+            </div>
             {/* PROFILE INTERACTIONS */}
             <div className="flex items-center gap-8">
                 <Image src="/share.svg" alt="Share Icon" width={22} height={22} />
@@ -101,12 +163,16 @@ const ProfilePageWrapper = () => {
                     <button className="border-none p-4 rounded-4xl font-bold cursor-pointer bg-stone-200">
                         Message
                     </button>
-                    <button
-                        className="border-none p-4 rounded-4xl font-bold cursor-pointer bg-[#e50829] text-white
-                            hover:bg-[#c1011e]"
-                    >
-                        Follow
-                    </button>
+                    {user && user.id !== profile.id && (
+                        <button
+                            onClick={handleFollow}
+                            className="border-none p-4 rounded-4xl font-bold cursor-pointer bg-[#e50829] text-white
+                                hover:bg-[#c1011e]"
+                            disabled={loadingFollow}
+                        >
+                            {isFollowing ? "Unfollow" : "Follow"}
+                        </button>
+                    )}
                 </div>
                 <Image src="/more.svg" alt="More Icon" width={22} height={22} />
             </div>

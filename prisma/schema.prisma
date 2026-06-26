@@ -68,7 +68,7 @@ model Follow {
   followerId  String
   followingId String
   followers   User     @relation("followings", fields: [followerId], references: [id])
-  followings  User     @relation("followers", fields: [followingId], references: [id])
+  following  User     @relation("followers", fields: [followingId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

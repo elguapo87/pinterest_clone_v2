@@ -1,4 +1,6 @@
+import { optionalUserAuth } from "@/lib/optionalUserAuth";
 import { prisma } from "@/lib/prisma";
+import { userAuth } from "@/lib/userAuth";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request, context: { params: Promise<{ username: string }> }) {
@@ -40,7 +42,34 @@ export async function GET(req: Request, context: { params: Promise<{ username: s
             }
         });
 
-        return NextResponse.json({ success: true, profile }, { status: 200 });
+        if (!profile) {
+            return NextResponse.json({ success: false, message: "Profile not found" }, { status: 404 });
+        }
+
+        // OPTIONAL AUTH
+        let isFollowing = false;
+
+        try {
+            const authUser = await userAuth();
+
+            if (authUser.id !== profile.id) {
+                 const follow = await prisma.follow.findUnique({
+                    where: {
+                        followerId_followingId: {
+                            followerId: authUser.id,
+                            followingId: profile.id
+                        }
+                    }
+                });
+                isFollowing = !!follow;
+            }
+
+        } catch (error) {
+            // user not logged in
+            isFollowing = false;
+        }
+
+        return NextResponse.json({ success: true, profile, isFollowing }, { status: 200 });
 
     } catch (error) {
         return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
