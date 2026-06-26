@@ -74,7 +74,7 @@ const CreatePageWrapper = () => {
         } else {
             try {
                 setLoading(true)
-    
+
                 const formData = new FormData();
                 formData.append("title", title);
                 formData.append("description", description);
@@ -83,11 +83,11 @@ const CreatePageWrapper = () => {
                 formData.append("tags", tags);
                 formData.append("textOptions", JSON.stringify(textOptions));
                 formData.append("canvasOptions", JSON.stringify(canvasOptions));
-    
+
                 if (media) {
                     formData.append("media", media);
                 }
-    
+
                 const { data } = await api.post("/pins/create", formData);
                 if (data.success) {
                     toast.success(data.message);
@@ -196,16 +196,6 @@ const CreatePageWrapper = () => {
                                         htmlFor="media"
                                         className="relative flex flex-col items-center gap-4 cursor-pointer group"
                                     >
-                                        {/* {media && (
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); setMedia(null); }}
-                                                className="absolute top-0 right-1 font-semibold text-gray-800 hidden
-                                                    group-hover:block hover:scale-101 cursor-pointer"
-                                            >
-                                                X
-                                            </button>
-                                        )} */}
-
                                         <input
                                             onChange={(e) => {
                                                 if (e.target.files) {
@@ -276,11 +266,21 @@ const CreatePageWrapper = () => {
                             <div className="flex flex-col gap-2">
                                 <label htmlFor="board" className="text-[13px] text-gray-600 ">Board</label>
                                 <select
-                                    onChange={(e) => setSelectedBoard(e.target.value)}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+
+                                        if (value === "create-board") {
+                                            router.push("/boards/create");
+                                            return;
+                                        }
+
+                                        setSelectedBoard(value);
+                                    }}
                                     value={selectedBoard}
                                     id="board"
                                     className="text-[15px] border-2 border-[#e9e9e9] p-4 rounded-2xl"
                                 >
+                                    <option value="create-board">+ Create new board</option>
                                     <option value="">No board (optional)</option>
                                     {boards.map((board) => (
                                         <option key={board.id} value={board.id}>{board.title}</option>

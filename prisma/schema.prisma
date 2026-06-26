@@ -18,6 +18,8 @@ model User {
   comments    Comment[]
   followers   Follow[]  @relation("followers")
   followings  Follow[]  @relation("followings")
+  likes       Like[]
+  saves       Save[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -38,6 +40,8 @@ model Pin {
   boardId       String?
   board         Board?    @relation(fields: [boardId], references: [id])
   comments      Comment[]
+  likes         Like[]
+  saves         Save[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -68,9 +72,33 @@ model Follow {
   followerId  String
   followingId String
   followers   User     @relation("followings", fields: [followerId], references: [id])
-  following  User     @relation("followers", fields: [followingId], references: [id])
+  following   User     @relation("followers", fields: [followingId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@unique([followerId, followingId])
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  pinId     String
+  userId    String
+  pin       Pin      @relation(fields: [pinId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, pinId])
+}
+
+model Save {
+  id        String   @id @default(cuid())
+  pinId     String
+  userId    String
+  pin       Pin      @relation(fields: [pinId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, pinId])
 }

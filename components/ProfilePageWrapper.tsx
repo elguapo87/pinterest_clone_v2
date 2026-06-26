@@ -153,7 +153,8 @@ const ProfilePageWrapper = () => {
             <h1 className="text-4xl font-medium">{profile.username}</h1>
             <span className="font-light text-gray-600">@{profile.displayName}</span>
             <div className="font-medium">
-                {followersCount} followers &bull; {followingsCount} followings
+                {followersCount} {followersCount > 1 ? "followers" : "follower"} &bull; {""}
+                {followingsCount} {followingsCount > 1 ? "followings" : "following"}
             </div>
             {/* PROFILE INTERACTIONS */}
             <div className="flex items-center gap-8">
@@ -166,8 +167,10 @@ const ProfilePageWrapper = () => {
                     {user && user.id !== profile.id && (
                         <button
                             onClick={handleFollow}
-                            className="border-none p-4 rounded-4xl font-bold cursor-pointer bg-[#e50829] text-white
-                                hover:bg-[#c1011e]"
+                            className={`border-none p-4 rounded-4xl font-bold cursor-pointer bg-[#e50829]
+                                text-white hover:bg-[#c1011e] ${loadingFollow
+                                    ? "cursor-not-allowed opacity-[0.5]"
+                                    : ""}`}
                             disabled={loadingFollow}
                         >
                             {isFollowing ? "Unfollow" : "Follow"}

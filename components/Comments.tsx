@@ -163,7 +163,7 @@ const Comments = ({ pinId }: { pinId: string }) => {
                                 handleCreate(e);
                             }
                         }}
-                        className="flex-1 border-none outline-none bg-transparent text-[16px] resize-none"
+                        className="w-full flex-1 border-none outline-none bg-transparent text-[16px] resize-none"
                         rows={1}
                         placeholder="Add a comment"
                     />
