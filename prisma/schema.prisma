@@ -36,9 +36,9 @@ model Pin {
   textOptions   Json?
   canvasOptions Json?
   userId        String
-  user          User      @relation(fields: [userId], references: [id])
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   boardId       String?
-  board         Board?    @relation(fields: [boardId], references: [id])
+  board         Board?    @relation(fields: [boardId], references: [id], onDelete: SetNull)
   comments      Comment[]
   likes         Like[]
   saves         Save[]
@@ -50,7 +50,7 @@ model Board {
   id        String   @id @default(cuid())
   title     String
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   pins      Pin[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -60,9 +60,9 @@ model Comment {
   id          String   @id @default(cuid())
   description String
   pinId       String
-  pin         Pin      @relation(fields: [pinId], references: [id])
+  pin         Pin      @relation(fields: [pinId], references: [id], onDelete: Cascade)
   userId      String
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -71,8 +71,8 @@ model Follow {
   id          String   @id @default(cuid())
   followerId  String
   followingId String
-  followers   User     @relation("followings", fields: [followerId], references: [id])
-  following   User     @relation("followers", fields: [followingId], references: [id])
+  followers   User     @relation("followings", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("followers", fields: [followingId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -83,8 +83,8 @@ model Like {
   id        String   @id @default(cuid())
   pinId     String
   userId    String
-  pin       Pin      @relation(fields: [pinId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  pin       Pin      @relation(fields: [pinId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -95,8 +95,8 @@ model Save {
   id        String   @id @default(cuid())
   pinId     String
   userId    String
-  pin       Pin      @relation(fields: [pinId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  pin       Pin      @relation(fields: [pinId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

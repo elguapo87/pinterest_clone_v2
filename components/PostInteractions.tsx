@@ -1,13 +1,31 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import ImageKitWrapper from "./ImageKitWrapper"
 import api from "@/lib/axios";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { AuthContext } from "@/context/AuthContext";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useClickOutside } from "@/hooks/clickOutside";
 
-const PostInteractions = ({ pinId }: { pinId: string }) => {
+type PostWrapperProps = {
+    pinId: string;
+    pinOwnerId: string;
+    pinMedia: string
+}
+
+const PostInteractions = ({ pinId, pinOwnerId, pinMedia }: PostWrapperProps) => {
+    const authContext = useContext(AuthContext);
+    if (!authContext) throw new Error("PostInteractions must be within AuthContextProvider");
+    const { user } = authContext;
+
     const [liked, setLiked] = useState(false);
     const [saved, setSaved] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
+    const [showMenu, setShowMenu] = useState(false);
+
+    const router = useRouter();
+    const menuRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         if (!pinId) return;
@@ -36,6 +54,11 @@ const PostInteractions = ({ pinId }: { pinId: string }) => {
     }, [pinId]);
 
     const handleLike = async () => {
+        if (!user) {
+            toast.error("You must login to like a pin");
+            return;
+        }
+
         try {
             const { data } = await api.post("/pins/like", { pinId });
 
@@ -51,9 +74,14 @@ const PostInteractions = ({ pinId }: { pinId: string }) => {
     };
 
     const handleSave = async () => {
+        if (!user) {
+            toast.error("You must login to save a pin");
+            return;
+        }
+
         try {
-            const {data} = await api.post("/pins/save", {pinId});
-            
+            const { data } = await api.post("/pins/save", { pinId });
+
             if (data.success) {
                 setSaved(data.saved);
             }
@@ -64,9 +92,69 @@ const PostInteractions = ({ pinId }: { pinId: string }) => {
         }
     };
 
+    const handleDelete = async () => {
+        try {
+            const confirmation = window.confirm("Are you sure you want to delete this pin?");
+            if (!confirmation) return;
+
+            const { data } = await api.delete(`/pins/delete?pinId=${pinId}`);
+
+            if (data.success) {
+                toast.success(data.message);
+                router.replace("/");
+            }
+
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                toast.error(error.response?.data?.message);
+            }
+        }
+    };
+
+    const handleDownload = async () => {
+        if (!pinMedia) return;
+
+        try {
+            const response = await fetch(pinMedia);
+            const blob = await response.blob();
+
+            const url = window.URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+
+            link.href = url;
+            link.download = `pin-${pinId}.png`;
+
+            document.body.appendChild(link);
+
+            link.click();
+
+            document.body.removeChild(link);
+
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            toast.error("Failed to download image");
+        }
+    };
+
+    const handleShare = () => {
+        const frontEndUrl = window.location.origin;
+        const pinUrl = `${frontEndUrl}/pin/${pinId}`;
+
+        if (navigator.share) {
+            navigator.share({ url: pinUrl, text: "Check out this image" });
+        } else {
+            alert("Share not supported on this browser.")
+        }
+    };
+
+    useClickOutside(menuRef, () => {
+        setShowMenu(false);
+    });
+
     return (
         <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 font-medium">
+            <div className="relative flex items-center gap-2 font-medium">
                 <svg
                     onClick={handleLike}
                     style={{ cursor: "pointer" }}
@@ -86,22 +174,60 @@ const PostInteractions = ({ pinId }: { pinId: string }) => {
                 </svg>
 
                 {likesCount}
-                <ImageKitWrapper
-                    src="/general/share.svg"
+                <Image
+                    onClick={handleShare}
+                    src="/share.svg"
                     alt="React Icon"
                     width={20}
                     height={20}
-                    imgWidth={20}
                     className="size-5 cursor-pointer"
                 />
-                <ImageKitWrapper
-                    src="/general/more.svg"
+                <Image
+                    onClick={() => setShowMenu(prev => !prev)}
+                    src="/more.svg"
                     alt="React Icon"
                     width={20}
                     height={20}
-                    imgWidth={20}
                     className="size-5 cursor-pointer"
                 />
+
+                {showMenu && (
+                    <div
+                        ref={menuRef}
+                        className="absolute flex flex-col items-start justify-center gap-2 
+                            top-8 -right-7 bg-white shadow-lg rounded-xl p-3 z-50 text-sm"
+                    >
+                        <button
+                            onClick={handleDownload}
+                            className="cursor-pointer hover:text-black hover:scale-101 flex items-center gap-1"
+                        >
+                            <Image
+                                src="/download.svg"
+                                alt="Download Icon"
+                                width={16}
+                                height={16}
+                                className="size-4"
+                            />
+                            Download
+                        </button>
+                        {user?.id === pinOwnerId && (
+                            <button
+                                onClick={handleDelete}
+                                className="cursor-pointer hover:text-black hover:scale-101 flex items-center gap-1"
+                            >
+                                <Image
+                                    src="/delete.svg"
+                                    alt="Delete Icon"
+                                    width={16}
+                                    height={16}
+                                    className="size-4"
+                                />
+                                Delete
+                            </button>
+
+                        )}
+                    </div>
+                )}
             </div>
             <button
                 onClick={handleSave}

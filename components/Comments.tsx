@@ -55,9 +55,6 @@ const Comments = ({ pinId }: { pinId: string }) => {
         fetchComments();
     }, [pinId]);
 
-    console.log(comments);
-
-
     const handleCreate = async (e: React.SyntheticEvent) => {
         e.preventDefault();
 
