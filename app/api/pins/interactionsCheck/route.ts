@@ -41,21 +41,13 @@ export async function GET(req: NextRequest) {
             saved = !!existingSave
         }
 
-        const [likesCount, savesCount] = await Promise.all([
-            prisma.like.count({
-                where: {
-                    pinId
-                }
-            }),
+        const likesCount = await prisma.like.count({
+            where: {
+                pinId
+            }
+        });
 
-            prisma.save.count({
-                where: {
-                    pinId
-                }
-            })
-        ]);
-
-        return NextResponse.json({ success: true, liked, saved, likesCount, savesCount }, { status: 200 });
+        return NextResponse.json({ success: true, liked, saved, likesCount }, { status: 200 });
 
     } catch (error) {
         return NextResponse.json({ success: false, message: "Failed to check interactions" }, { status: 500 });

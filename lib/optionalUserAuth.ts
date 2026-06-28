@@ -32,4 +32,4 @@ export const optionalUserAuth = async () => {
     } catch (error) {
         return null;
     }
-}
+};
