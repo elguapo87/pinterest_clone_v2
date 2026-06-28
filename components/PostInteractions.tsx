@@ -35,10 +35,40 @@ const PostInteractions = ({ pinId }: { pinId: string }) => {
         fetchInteractions();
     }, [pinId]);
 
+    const handleLike = async () => {
+        try {
+            const { data } = await api.post("/pins/like", { pinId });
+
+            if (data.success) {
+                setLiked(data.liked);
+                setLikesCount(data.likesCount);
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                toast.error(error.response?.data?.message);
+            }
+        }
+    };
+
+    const handleSave = async () => {
+        try {
+            const {data} = await api.post("/pins/save", {pinId});
+            
+            if (data.success) {
+                setSaved(data.saved);
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                toast.error(error.response?.data?.message);
+            }
+        }
+    };
+
     return (
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 font-medium">
                 <svg
+                    onClick={handleLike}
                     style={{ cursor: "pointer" }}
                     width="20"
                     height="20"
@@ -74,6 +104,7 @@ const PostInteractions = ({ pinId }: { pinId: string }) => {
                 />
             </div>
             <button
+                onClick={handleSave}
                 className="bg-[#e50829] text-white border-none rounded-3xl px-4 py-3
                     text-sm font-bold cursor-pointer"
             >
