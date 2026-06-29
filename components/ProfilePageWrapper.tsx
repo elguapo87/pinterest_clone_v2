@@ -153,8 +153,8 @@ const ProfilePageWrapper = () => {
             <h1 className="text-4xl font-medium">{profile.username}</h1>
             <span className="font-light text-gray-600">@{profile.displayName}</span>
             <div className="font-medium">
-                {followersCount} {followersCount > 1 ? "followers" : "follower"} &bull; {""}
-                {followingsCount} {followingsCount > 1 ? "followings" : "following"}
+                {followersCount} {followersCount === 1 ? "follower" : "followers"} &bull; {""}
+                {followingsCount} {followingsCount === 1 ? "following" : "followings"}
             </div>
             {/* PROFILE INTERACTIONS */}
             <div className="flex items-center gap-8">

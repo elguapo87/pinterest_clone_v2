@@ -12,8 +12,6 @@ const UserButton = () => {
     if (!authContext) throw new Error("UserButton must be within AuthContextProvider");
     const { user, logout } = authContext;
 
-    const currentUser = true;
-
     const openRef = useRef<HTMLDivElement | null>(null);
     const [open, setOpen] = useState(false);
 
@@ -44,13 +42,13 @@ const UserButton = () => {
                     className="absolute right-0 top-[120%] p-4 rounded-lg bg-white z-999 flex flex-col text-sm
                         shadow-[0px_0px_4px_1px_rgba(0,0,0,0.177)]"
                 >
-                    <div className="cursor-pointer p-2 rounded-lg hover:bg-[#f1f1f1] text-gray-800">
+                    <Link
+                        href={`/profile/edit/${user.username}`}
+                        className="cursor-pointer p-2 rounded-lg hover:bg-[#f1f1f1] text-gray-800"
+                    >
                         Profile
-                    </div>
-                    <div className="cursor-pointer p-2 rounded-lg hover:bg-[#f1f1f1] text-gray-800">
-                        Setting
-                    </div>
-                    <div 
+                    </Link>
+                    <div
                         onClick={logout}
                         className="cursor-pointer p-2 rounded-lg hover:bg-[#f1f1f1] text-gray-800"
                     >

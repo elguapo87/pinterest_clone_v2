@@ -1,4 +1,3 @@
-import { optionalUserAuth } from "@/lib/optionalUserAuth";
 import { prisma } from "@/lib/prisma";
 import { userAuth } from "@/lib/userAuth";
 import { NextResponse } from "next/server";
