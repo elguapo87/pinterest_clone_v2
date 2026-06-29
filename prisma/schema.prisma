@@ -7,21 +7,23 @@ datasource db {
 }
 
 model User {
-  id          String    @id @default(cuid())
-  displayName String
-  username    String    @unique
-  email       String    @unique
-  password    String
-  avatar      String?
-  pins        Pin[]
-  boards      Board[]
-  comments    Comment[]
-  followers   Follow[]  @relation("followers")
-  followings  Follow[]  @relation("followings")
-  likes       Like[]
-  saves       Save[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id               String    @id @default(cuid())
+  displayName      String
+  username         String    @unique
+  email            String    @unique
+  password         String
+  avatar           String?
+  pins             Pin[]
+  boards           Board[]
+  comments         Comment[]
+  followers        Follow[]  @relation("followers")
+  followings       Follow[]  @relation("followings")
+  likes            Like[]
+  saves            Save[]
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }
 
 model Pin {
@@ -101,4 +103,15 @@ model Save {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, pinId])
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  content    String
+  senderId   String
+  receiverId String
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
