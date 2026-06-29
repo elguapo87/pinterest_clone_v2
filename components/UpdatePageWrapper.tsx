@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import Loader from "./Loader";
 import Gallery from "./Gallery";
 import { AuthContext } from "@/context/AuthContext";
+import Collection from "./Collection";
 
 type Profile = {
     id: string;
@@ -55,9 +56,9 @@ type SavedPin = {
 };
 
 const UpdatePageWrapper = () => {
-     const authContext = useContext(AuthContext);
-        if (!authContext) throw new Error("UserButton must be within AuthContextProvider");
-        const { setUser } = authContext;
+    const authContext = useContext(AuthContext);
+    if (!authContext) throw new Error("UserButton must be within AuthContextProvider");
+    const { setUser } = authContext;
 
     const { username: profileUsername } = useParams() as { username: string };
 
@@ -184,7 +185,7 @@ const UpdatePageWrapper = () => {
 
     const fetchSaves = async () => {
         try {
-            const {data} = await api.get("/pins/savedPins");
+            const { data } = await api.get("/pins/savedPins");
 
             if (data.success) {
                 setSavedPins(data.savedPins);
@@ -204,7 +205,7 @@ const UpdatePageWrapper = () => {
     const saved = savedPins.map((save) => save.pin);
 
     console.log(savedPins);
-    
+
     if (!profile && loading) return null;
 
     return profile ? (
@@ -366,17 +367,31 @@ const UpdatePageWrapper = () => {
                 >
                     Saved
                 </span>
+                <span
+                    onClick={() => setType("boards")}
+                    className={`cursor-pointer py-1 px-0 hover:text-gray-600 
+                        ${type === "boards" ? "border-b-3 border-black" : ""}`}
+                >
+                    Boards
+                </span>
             </div>
 
-            {type === "created" ? (
+            {type === "created" && (
                 <Gallery key="created" initialPins={profile.pins} />
-            ) : (
+            )}
+
+            {type === "saved" && (
                 saved.length > 0 ? (
                     <Gallery key="saved" initialPins={saved} />
                 ) : (
                     <h1>No saved pins</h1>
                 )
             )}
+
+            {type === "boards" && (
+                <Collection boards={profile.boards} />
+            )}
+
         </div>
     ) : (
         <Loader />

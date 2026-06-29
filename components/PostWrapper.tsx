@@ -98,7 +98,7 @@ const PostWrapper = () => {
                             width={32}
                             height={32}
                             imgWidth={32}
-                            className="w-8 h-8 rounded-full"
+                            className="w-8 h-8 rounded-full aspect-square object-cover"
                         />
                         <span className="text-sm">{pin.user.username}</span>
                     </Link>
