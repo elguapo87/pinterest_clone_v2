@@ -4,10 +4,11 @@ import api from "@/lib/axios";
 import axios from "axios";
 import Image from "next/image"
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import toast from "react-hot-toast";
 import Loader from "./Loader";
 import Gallery from "./Gallery";
+import { AuthContext } from "@/context/AuthContext";
 
 type Profile = {
     id: string;
@@ -54,6 +55,9 @@ type SavedPin = {
 };
 
 const UpdatePageWrapper = () => {
+     const authContext = useContext(AuthContext);
+        if (!authContext) throw new Error("UserButton must be within AuthContextProvider");
+        const { setUser } = authContext;
 
     const { username: profileUsername } = useParams() as { username: string };
 
@@ -139,7 +143,7 @@ const UpdatePageWrapper = () => {
 
             if (data.success) {
                 toast.success(data.message);
-
+                setEditingField(null);
                 setUsername("");
                 setDisplayName("");
                 setAvatar(null);
@@ -154,6 +158,17 @@ const UpdatePageWrapper = () => {
                         avatar: data.user.avatar
                     };
                 });
+
+                setUser((prev) => {
+                    if (!prev) return prev;
+
+                    return {
+                        ...prev,
+                        username: data.user.username,
+                        displayName: data.user.displayName,
+                        avatar: data.user.avatar
+                    }
+                })
 
                 if (data.user.username !== profile?.username) {
                     router.push(`/profile/edit/${data.user.username}`);

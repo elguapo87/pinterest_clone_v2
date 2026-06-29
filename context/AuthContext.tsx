@@ -29,6 +29,7 @@ type LoginData = {
 
 interface AuthContextType {
     user: User | null;
+    setUser: React.Dispatch<React.SetStateAction<User | null>>;
     loading: boolean;
     authLoading: boolean;
     register: (credentials: RegisterData) => Promise<void>;
@@ -129,7 +130,7 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const value = {
-        user,
+        user, setUser,
         register,
         login,
         loading,
