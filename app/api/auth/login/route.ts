@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
                 id: user.id,
                 displayName: user.displayName,
                 username: user.username,
+                avatar: user.avatar,
                 email: user.email
             }
         }, { status: 200 });
