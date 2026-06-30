@@ -76,7 +76,7 @@ const LeftBar = () => {
                     <Image src="/updates.svg" alt="Updates" width={18} height={18} />
                 </Link>
                 <Link
-                    href="/"
+                    href="/messages"
                     className="size-12 flex items-center justify-center hover:bg-[#f1f1f1]"
                 >
                     <Image src="/messages.svg" alt="Messages" width={18} height={18} />
