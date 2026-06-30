@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useContext, useRef, useState } from "react"
 
-const UserButton = () => {
+const UserButton = ({ showSearch }: { showSearch: boolean }) => {
 
     const authContext = useContext(AuthContext);
     if (!authContext) throw new Error("UserButton must be within AuthContextProvider");
@@ -20,7 +20,11 @@ const UserButton = () => {
     });
 
     return user ? (
-        <div ref={openRef} className="max-sm:hidden relative flex items-center gap-4 userButton">
+        <div 
+            ref={openRef} 
+            className={`max-sm:hidden relative flex items-center gap-4
+                ${showSearch ? "ml-auto" : ""}`}
+        >
             <Image
                 src={user.avatar || "/noAvatar.png"}
                 alt="Avatar"
