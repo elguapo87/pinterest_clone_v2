@@ -5,7 +5,7 @@ import ImageKitWrapper from "./ImageKitWrapper";
 import Image from "next/image";
 import Gallery from "./Gallery";
 import Collection from "./Collection";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import api from "@/lib/axios";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -64,6 +64,8 @@ const ProfilePageWrapper = () => {
     const [followingsCount, setFollowingsCount] = useState(0);
     const [loadingFollow, setLoadingFollow] = useState(false);
 
+    const router = useRouter();
+
     useEffect(() => {
         if (!username) return;
 
@@ -110,6 +112,11 @@ const ProfilePageWrapper = () => {
     }, [username]);
 
     const handleFollow = async () => {
+        if (!user) {
+            toast.error("You must be logged in to follow this user.");
+            return;
+        }
+
         const prevState = isFollowing;
         setIsFollowing(prev => !prev);
 
@@ -138,6 +145,15 @@ const ProfilePageWrapper = () => {
         }
     };
 
+    const handleOpenChat = () => {
+        if (!user) {
+            toast.error("You must be logged in to send a message.");
+            return;
+        }
+
+        router.push(`/messages/${profile?.id}`)
+    };
+
     if (!profile && loading) return null;
 
     return profile ? (
@@ -161,10 +177,15 @@ const ProfilePageWrapper = () => {
                 <Image src="/share.svg" alt="Share Icon" width={22} height={22} />
                 {/* PROFILE BUTTONS */}
                 <div className="flex gap-4">
-                    <button className="border-none p-4 rounded-4xl font-bold cursor-pointer bg-stone-200">
-                        Message
-                    </button>
-                    {user && user.id !== profile.id && (
+                    {user?.id !== profile.id && (
+                        <button
+                            onClick={handleOpenChat}
+                            className="border-none p-4 rounded-4xl font-bold cursor-pointer bg-stone-200"
+                        >
+                            Message
+                        </button>
+                    )}
+                    {user?.id !== profile.id && (
                         <button
                             onClick={handleFollow}
                             className={`border-none p-4 rounded-4xl font-bold cursor-pointer bg-[#e50829]
