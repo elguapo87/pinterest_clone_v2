@@ -17,6 +17,7 @@ type Conversation = {
     };
     lastMessage: string;
     lastMessageAt: string;
+    unreadCount: number; 
 };
 
 
@@ -81,11 +82,11 @@ const MessagesWrapper = () => {
                                             </p>
                                         </div>
 
-                                        <div className="flex flex-col md:flex-row md:items-center gap-2">
+                                        <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
                                             <button
                                                 onClick={() => router.push(`/messages/${conv.user.id}`)}
-                                                className="size-10 flex items-center justify-center text-sm rounded
-                                                    bg-slate-100 hover:bg-slate-200 text-slate-800
+                                                className="relative size-10 flex items-center justify-center text-sm
+                                                    rounded bg-slate-100 hover:bg-slate-200 text-slate-800
                                                     active:scale-95 transition cursor-pointer"
 
                                             >
@@ -96,6 +97,17 @@ const MessagesWrapper = () => {
                                                     height={20}
                                                     className="size-5"
                                                 />
+
+                                                {conv.unreadCount > 0 && (
+                                                     <div
+                                                        className="absolute top-0 right-0 translate-x-1/2
+                                                            -translate-y-1/4 size-4 rounded-full
+                                                            flex items-center justify-center
+                                                            bg-red-500 text-stone-50 text-sm"
+                                                    >
+                                                        {conv.unreadCount}
+                                                    </div>
+                                                )}
                                             </button>
                                         </div>
                                     </div>

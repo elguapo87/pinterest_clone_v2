@@ -13,32 +13,40 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ success: false, message: "Receiver is requred" }, { status: 400 });
         }
 
+        const receiver = await prisma.user.findUnique({
+            where: {
+                id: receiverId
+            },
+            select: {
+                id: true,
+                username: true,
+                displayName: true,
+                avatar: true
+            }
+        });
 
-        const [receiver, messages] = await Promise.all([
-            prisma.user.findUnique({
-                where: {
-                    id: receiverId
-                },
-                select: {
-                    id: true,
-                    username: true,
-                    displayName: true,
-                    avatar: true
-                }
-            }),
+        await prisma.message.updateMany({
+            where: {
+                senderId: receiverId!,
+                receiverId: user.id,
+                isRead: false
+            },
+            data: {
+                isRead: true
+            }
+        });
 
-            prisma.message.findMany({
-                where: {
-                    OR: [
-                        { senderId: user.id, receiverId },
-                        { senderId: receiverId, receiverId: user.id }
-                    ]
-                },
-                orderBy: {
-                    createdAt: "asc"
-                }
-            })
-        ]);
+        const messages = await prisma.message.findMany({
+            where: {
+                OR: [
+                    { senderId: user.id, receiverId },
+                    { senderId: receiverId, receiverId: user.id }
+                ]
+            },
+            orderBy: {
+                createdAt: "asc"
+            }
+        });
 
         return NextResponse.json({ success: true, messages, receiver }, { status: 200 });
 

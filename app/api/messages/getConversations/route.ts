@@ -1,10 +1,10 @@
+import { optionalUserAuth } from "@/lib/optionalUserAuth";
 import { prisma } from "@/lib/prisma";
-import { userAuth } from "@/lib/userAuth";
 import { NextResponse } from "next/server";
 
 export async function GET() {
     try {
-        const user = await userAuth();
+        const user = await optionalUserAuth();
 
         let messages;
 
@@ -45,7 +45,7 @@ export async function GET() {
         if (messages) {
             messages.forEach((msg) => {
                 const otherUser =
-                    msg.senderId === user.id
+                    msg.senderId === user?.id
                         ? msg.receiver
                         : msg.sender;
 
@@ -53,8 +53,15 @@ export async function GET() {
                     conversations.set(otherUser.id, {
                         user: otherUser,
                         lastMessage: msg.content,
-                        lastMessageAt: msg.createdAt
+                        lastMessageAt: msg.createdAt,
+                        unreadCount: 0
                     });
+                }
+
+                const conversation = conversations.get(otherUser.id);
+
+                if (msg.senderId === otherUser.id && msg.receiverId === user?.id && !msg.isRead) {
+                    conversation.unreadCount += 1;
                 }
             });
         }

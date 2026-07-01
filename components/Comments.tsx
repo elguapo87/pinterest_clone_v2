@@ -123,7 +123,7 @@ const Comments = ({ pinId }: { pinId: string }) => {
                             width={32}
                             height={32}
                             imgWidth={32}
-                            className="w-8 h-8 rounded-full"
+                            className="w-8 h-8 rounded-full aspect-square object-cover"
                         />
                         {/* COMMENT CONTENT */}
                         <div className="flex flex-col">
