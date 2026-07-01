@@ -4,6 +4,7 @@ import "./globals.css";
 import AuthContextProvider from "@/context/AuthContext";
 import { Toaster } from "react-hot-toast";
 import EditorContextProvider from "@/context/EditorContext";
+import NotificationContextProvider from "@/context/NotificationContext";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -28,10 +29,12 @@ export default function RootLayout({
     <html lang="en" className={`${roboto.className} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <AuthContextProvider>
-          <EditorContextProvider>
-            <Toaster />
-            {children}
-          </EditorContextProvider>
+          <NotificationContextProvider>
+            <EditorContextProvider>
+              <Toaster />
+              {children}
+            </EditorContextProvider>
+          </NotificationContextProvider>
         </AuthContextProvider>
       </body>
     </html>
