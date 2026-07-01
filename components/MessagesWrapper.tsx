@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import AuthGuard from "./auth/AuthGuard";
 import Image from "next/image";
+import Link from "next/link";
 
 type Conversation = {
     user: {
@@ -17,7 +18,7 @@ type Conversation = {
     };
     lastMessage: string;
     lastMessageAt: string;
-    unreadCount: number; 
+    unreadCount: number;
 };
 
 
@@ -62,25 +63,27 @@ const MessagesWrapper = () => {
                                 {conversations.map((conv) => (
                                     <div
                                         key={conv.user.id}
-                                        className="max-w-xl flex items-center gap-1 md:gap-5 p-4 md:p-6 bg-white
+                                        className="max-w-xl flex items-center justify-between p-4 md:p-6 bg-white
                                             shadow rounded-md"
                                     >
-                                        <Image
-                                            src={conv.user.avatar || "/noAvatar.png"}
-                                            width={48}
-                                            height={48}
-                                            alt=""
-                                            className="rounded-full aspect-square size-10 md:size-12 object-cover"
-                                        />
+                                        <Link href={`/profile/${conv.user.username}`} className="flex items-center gap-1 md:gap-5">
+                                            <Image
+                                                src={conv.user.avatar || "/noAvatar.png"}
+                                                width={48}
+                                                height={48}
+                                                alt=""
+                                                className="rounded-full aspect-square size-10 md:size-12 object-cover"
+                                            />
 
-                                        <div className="flex-1">
-                                            <p className="font-medium text-sm  md:text-base text-slate-700">
-                                                {conv.user.username}
-                                            </p>
-                                            <p className="text-slate-500 text-[12px] md:text-sm">
-                                                @{conv.user.displayName}
-                                            </p>
-                                        </div>
+                                            <div className="flex-1">
+                                                <p className="font-medium text-sm  md:text-base text-slate-700">
+                                                    {conv.user.username}
+                                                </p>
+                                                <p className="text-slate-500 text-[12px] md:text-sm">
+                                                    @{conv.user.displayName}
+                                                </p>
+                                            </div>
+                                        </Link>
 
                                         <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
                                             <button
@@ -91,7 +94,7 @@ const MessagesWrapper = () => {
 
                                             >
                                                 <Image
-                                                    src="/eye.svg"
+                                                    src="/messages.svg"
                                                     alt="Message"
                                                     width={20}
                                                     height={20}
@@ -99,7 +102,7 @@ const MessagesWrapper = () => {
                                                 />
 
                                                 {conv.unreadCount > 0 && (
-                                                     <div
+                                                    <div
                                                         className="absolute top-0 right-0 translate-x-1/2
                                                             -translate-y-1/4 size-4 rounded-full
                                                             flex items-center justify-center
