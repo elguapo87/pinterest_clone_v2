@@ -4,6 +4,7 @@ import { useClickOutside } from "@/hooks/clickOutside";
 import Image from "next/image"
 import Link from "next/link"
 import { useRef, useState } from "react";
+import Notifications from "./Notifications";
 
 const LeftBar = () => {
     const [showDropdown, setShowDropdown] = useState(false);
@@ -69,12 +70,9 @@ const LeftBar = () => {
                         </div>
                     )}
                 </div>
-                <Link
-                    href="/"
-                    className="size-12 flex items-center justify-center hover:bg-[#f1f1f1]"
-                >
-                    <Image src="/updates.svg" alt="Updates" width={18} height={18} />
-                </Link>
+                    
+                <Notifications />
+
                 <Link
                     href="/messages"
                     className="size-12 flex items-center justify-center hover:bg-[#f1f1f1]"

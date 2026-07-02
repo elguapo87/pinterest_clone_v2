@@ -2,7 +2,7 @@
 
 import api from "@/lib/axios";
 import axios from "axios";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 interface NotificationContextType {
@@ -28,6 +28,10 @@ const NotificationContextProvider = ({ children }: { children: React.ReactNode }
             }
         }
     };
+
+    useEffect(() => {
+        fetchUnreadCount();
+    }, []);
 
     const value = {
         unreadCount,

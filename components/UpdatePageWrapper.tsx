@@ -204,8 +204,6 @@ const UpdatePageWrapper = () => {
 
     const saved = savedPins.map((save) => save.pin);
 
-    console.log(savedPins);
-
     if (!profile && loading) return null;
 
     return profile ? (

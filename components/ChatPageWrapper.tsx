@@ -1,6 +1,6 @@
 "use client"
 
-import { use, useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import AuthGuard from './auth/AuthGuard'
 import { useParams } from 'next/navigation';
 import api from '@/lib/axios';
@@ -10,6 +10,7 @@ import Loader from './Loader';
 import Image from 'next/image';
 import { AuthContext } from '@/context/AuthContext';
 import { format } from 'timeago.js';
+import { NotificationContext } from '@/context/NotificationContext';
 
 type Message = {
     id: string;
@@ -35,6 +36,10 @@ const ChatPageWrapper = () => {
     if (!authContext) throw new Error("ChatPageWrapper should be within AuthContextProvider");
     const { user } = authContext;
 
+    const notificationContext = useContext(NotificationContext);                                                
+    if (!notificationContext) throw new Error("Notifications must be within NotificationContextProvider");
+    const { fetchUnreadCount } = notificationContext
+
     const [receiver, setReceiver] = useState<Receiver | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const [content, setContent] = useState("");
@@ -54,6 +59,7 @@ const ChatPageWrapper = () => {
                 if (data.success) {
                     setReceiver(data.receiver);
                     setMessages(data.messages);
+                    await fetchUnreadCount();
                 }
             } catch (error) {
                 if (axios.isAxiosError(error)) {
