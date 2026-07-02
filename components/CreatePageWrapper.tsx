@@ -9,7 +9,7 @@ import api from "@/lib/axios";
 import axios from "axios";
 import toast from "react-hot-toast";
 import PinEditor from "./pinEditor/PinEditor";
-import { EditorContext } from "@/context/EditorContext";
+import { EditorContext, initialCanvasOptions, initialTextOptions } from "@/context/EditorContext";
 
 type Board = {
     id: string;
@@ -23,7 +23,7 @@ const CreatePageWrapper = () => {
 
     const editorContext = useContext(EditorContext);
     if (!editorContext) throw new Error("CreatePageWrapper must be within EditorContextProvider");
-    const { textOptions, canvasOptions } = editorContext;
+    const { textOptions, canvasOptions, setTextOptions, setCanvasOptions } = editorContext;
 
     const [media, setMedia] = useState<File | null>(null);
     const [title, setTitle] = useState("");
@@ -42,6 +42,7 @@ const CreatePageWrapper = () => {
     const [loading, setLoading] = useState(false);
 
     const [isEditing, setIsEditing] = useState(false);
+    const [hasEdited, setHasEdited] = useState(false);
 
     const router = useRouter();
 
@@ -81,8 +82,11 @@ const CreatePageWrapper = () => {
                 formData.append("link", link);
                 formData.append("board", selectedBoard);
                 formData.append("tags", tags);
-                formData.append("textOptions", JSON.stringify(textOptions));
-                formData.append("canvasOptions", JSON.stringify(canvasOptions));
+
+                if (hasEdited) {
+                    formData.append("textOptions", JSON.stringify(textOptions));
+                    formData.append("canvasOptions", JSON.stringify(canvasOptions));
+                }
 
                 if (media) {
                     formData.append("media", media);
@@ -90,6 +94,14 @@ const CreatePageWrapper = () => {
 
                 const { data } = await api.post("/pins/create", formData);
                 if (data.success) {
+                    setTextOptions(initialTextOptions);
+                    setCanvasOptions(initialCanvasOptions);
+                    
+                    setMedia(null);
+                    setPreviewImage(null);
+                    setHasEdited(false);
+                    setIsEditing(false);
+
                     toast.success(data.message);
                     router.push("/");
                 }
@@ -171,7 +183,10 @@ const CreatePageWrapper = () => {
                                         className="object-cover rounded-4xl"
                                     />
                                     <div
-                                        onClick={() => setIsEditing(true)}
+                                        onClick={() => {
+                                            setIsEditing(true);
+                                            setHasEdited(true);
+                                        }}
                                         className="absolute top-4 right-4 bg-white flex items-center justify-center
                                             p-1.5 rounded-full cursor-pointer w-10 h-10"
                                     >

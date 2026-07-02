@@ -245,7 +245,6 @@ const Options = ({ previewImage }: { previewImage: PinEditorProps }) => {
                   />
                 </div>
               )}
-
             </div>
           </div>
         </div>

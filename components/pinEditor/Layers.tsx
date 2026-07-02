@@ -45,8 +45,7 @@ const Layers = ({ previewImage }: { previewImage: PinEditorProps }) => {
         className={`flex items-center gap-2 p-2 rounded-2xl cursor-pointer font-light text-[14px]
             hover:bg-[#f0f0f0] ${selectedLayer === "canvas" ? "bg-[#f0f0f0]" : ""}`}
       >
-        <div className="size-12 rounded-lg overflow-hidden" style={{ backgroundColor: canvasOptions.backgroundColor }}>
-        </div>
+        <div className="size-12 rounded-lg overflow-hidden" style={{ backgroundColor: canvasOptions.backgroundColor }} />
         <span>Canvas</span>
       </div>
     </div>

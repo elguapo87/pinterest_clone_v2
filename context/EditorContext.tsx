@@ -2,6 +2,23 @@
 
 import { createContext, useState } from "react";
 
+export const initialTextOptions = {
+    text: "",
+    fontSize: 48,
+    color: "#000000",
+    top: 48,
+    left: 0,
+    isVisible: false
+};
+
+export const initialCanvasOptions = {
+    width: 0,
+    height: 0,
+    orientation: "portrait" as const,
+    size: "original",
+    backgroundColor: "#008080"
+};
+
 type TextOptions = {
     text: string;
     fontSize: number;
@@ -37,22 +54,9 @@ const EditorContextProvider = ({ children }: { children: React.ReactNode }) => {
 
     const [selectedLayer, setSelectedLayer] = useState<string>("canvas");
 
-    const [textOptions, setTextOptions] = useState<TextOptions>({
-        text: "",
-        fontSize: 48,
-        color: "#000000",
-        top: 48,
-        left: 0,
-        isVisible: false
-    });
+    const [textOptions, setTextOptions] = useState<TextOptions>(initialTextOptions);
 
-    const [canvasOptions, setCanvasOptions] = useState<CanvasOptions>({
-        width: 375,
-        height: 0,
-        orientation: "portrait",
-        size: "original",
-        backgroundColor: "#008080"
-    });
+    const [canvasOptions, setCanvasOptions] = useState<CanvasOptions>(initialCanvasOptions);
 
     const changeTextOptions = (newOption: Partial<TextOptions>) => {
         setTextOptions((prev) => ({

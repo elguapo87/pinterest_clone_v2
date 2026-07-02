@@ -41,33 +41,42 @@ export async function POST(req: NextRequest) {
 
         const originalOrientation = originalHeight > originalWidth ? "portrait" : "landscape";
 
-        const originalAspectRatio =
-            originalHeight > 0
-                ? originalWidth / originalHeight
-                : 1;
-
         // TARGET DIMENSIONS
-        let targetWidth = originalWidth || 0;
-        let targetHeight = originalHeight || 0;
+        let targetWidth = originalWidth;
+        let targetHeight = originalHeight;
 
-        if (parsedCanvasOptions?.size !== "original") {
-            const [w, h] = parsedCanvasOptions.size.split(":").map(Number);
+        if (parsedCanvasOptions) {
+            if (parsedCanvasOptions.size !== "original") {
 
-            const targetAspectRatio = w / h;
+                const [w, h] =
+                    parsedCanvasOptions.size
+                        .split(":")
+                        .map(Number);
 
-            if (parsedCanvasOptions.orientation === "portrait") {
-                targetHeight = originalHeight;
-                targetWidth = Math.round(targetHeight * targetAspectRatio);
+                const targetAspectRatio = w / h;
+
+                if (
+                    parsedCanvasOptions.orientation === "portrait"
+                ) {
+                    targetHeight = originalHeight;
+                    targetWidth = Math.round(
+                        targetHeight * targetAspectRatio
+                    );
+                } else {
+                    targetWidth = originalWidth;
+                    targetHeight = Math.round(
+                        targetWidth / targetAspectRatio
+                    );
+                }
+
             } else {
-                targetWidth = originalWidth;
-                targetHeight = Math.round(targetWidth / targetAspectRatio);
-            }
-        } else {
-            if (
-                parsedCanvasOptions.orientation !== originalOrientation
-            ) {
-                targetWidth = originalHeight;
-                targetHeight = originalWidth;
+                if (
+                    parsedCanvasOptions.orientation !==
+                    originalOrientation
+                ) {
+                    targetWidth = originalHeight;
+                    targetHeight = originalWidth;
+                }
             }
         }
 
@@ -77,13 +86,23 @@ export async function POST(req: NextRequest) {
                 width: targetWidth,
                 height: targetHeight,
                 fit: "contain",
-                background: parsedCanvasOptions.backgroundColor
+                background: parsedCanvasOptions?.backgroundColor || "#ffffff"
+            })
+            .jpeg({
+                quality: 85,
+                mozjpeg: true
             })
             .toBuffer();
 
         let finalBuffer = resizedImageBuffer;
 
-        if (parsedTextOptions?.isVisible && parsedTextOptions?.text) {
+        if (
+            parsedTextOptions?.isVisible &&
+            parsedTextOptions?.text &&
+            parsedCanvasOptions &&
+            parsedCanvasOptions.width > 0 &&
+            parsedCanvasOptions.height > 0
+        ) {
             const escapeXml = (unsafe: string) => {
                 return unsafe
                     .replace(/&/g, "&amp;")
@@ -93,8 +112,11 @@ export async function POST(req: NextRequest) {
                     .replace(/'/g, "&apos;");
             };
 
-            const scaleX = targetWidth / parsedCanvasOptions.width;
-            const scaleY = targetHeight / parsedCanvasOptions.height;
+            const canvasWidth = parsedCanvasOptions?.width || targetWidth;
+            const canvasHeight = parsedCanvasOptions?.height || targetHeight;
+
+            const scaleX = targetWidth / canvasWidth;
+            const scaleY = targetHeight / canvasHeight;
 
             const textLeft = parsedTextOptions.left * scaleX;
             const textTop = parsedTextOptions.top * scaleY;
@@ -129,7 +151,10 @@ export async function POST(req: NextRequest) {
                         left: 0,
                     }
                 ])
-                .png()
+                .jpeg({
+                    quality: 80,
+                    mozjpeg: true
+                })
                 .toBuffer();
         }
 
