@@ -154,7 +154,7 @@ const PostInteractions = ({ pinId, pinOwnerId, pinMedia }: PostWrapperProps) => 
 
     return (
         <div className="flex items-center justify-between">
-            <div className="relative flex items-center gap-2 font-medium">
+            <div ref={menuRef} className="relative flex items-center gap-2 font-medium">
                 <svg
                     onClick={handleLike}
                     style={{ cursor: "pointer" }}
@@ -193,7 +193,6 @@ const PostInteractions = ({ pinId, pinOwnerId, pinMedia }: PostWrapperProps) => 
 
                 {showMenu && (
                     <div
-                        ref={menuRef}
                         className="absolute flex flex-col items-start justify-center gap-2 
                             top-8 -right-7 bg-white shadow-lg rounded-xl p-3 z-50 text-sm"
                     >

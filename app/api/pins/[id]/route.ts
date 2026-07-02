@@ -21,9 +21,7 @@ export async function GET(req: Request, context: { params: Promise<{ id: string 
         });
 
         if (!pin) {
-            if (!pin) {
-                return NextResponse.json({ success: false, message: "Pin not found" }, { status: 404 });
-            }
+            return NextResponse.json({ success: false, message: "Pin not found" }, { status: 404 });
         }
 
         return NextResponse.json({ success: true, pin }, { status: 200 });

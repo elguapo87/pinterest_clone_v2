@@ -98,8 +98,7 @@ const Notifications = () => {
                             <div
                                 key={conv.user.id}
                                 onClick={(e) => chatOpen(conv.user.id, e)}
-                                className="inline-flex items-center gap-2 hover:bg-slate-200 hover:rounded-xl
-                                 p-2"
+                                className="inline-flex items-center gap-2 hover:bg-slate-200 hover:rounded-xl p-2"
                             >
                                 <span
                                     className="text-red-600 font-semibold text-sm"
