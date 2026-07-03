@@ -4,6 +4,8 @@ import ImageKitWrapper from "@/components/ImageKitWrapper"
 import { AuthContext } from "@/context/AuthContext"
 import { useContext, useState } from "react"
 import GuestGuard from "./GuestGuard"
+import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 const AuthWrapper = () => {
     const authContext = useContext(AuthContext);
@@ -16,6 +18,8 @@ const AuthWrapper = () => {
     const [password, setPassword] = useState("");
 
     const [isRegister, setIsRegister] = useState(false);
+
+    const router = useRouter();
 
     const handleRegister = async (e: React.SyntheticEvent) => {
         e.preventDefault();
@@ -32,9 +36,20 @@ const AuthWrapper = () => {
             <div className="w-screen h-screen flex items-center justify-center">
                 {/* AUTH CONTAINER */}
                 <div
-                    className="flex flex-col items-center justify-center gap-8 p-8 rounded-4xl
+                    className="relative flex flex-col items-center justify-center gap-8 p-8 rounded-4xl
                     shadow-[0px_0px_10px_0px_rgba(0,0,0,0.1)]"
                 >
+
+                    <Image
+                        onClick={() => router.back()}
+                        src="/arrow_back.svg"
+                        alt="Arrow"
+                        width={28}
+                        height={28}
+                        className="absolute top-3.5 left-3 size-7 cursor-pointer hover:scale-101 
+                            transition-all duration-200"
+                    />
+
                     <ImageKitWrapper
                         src="/general/logo.png"
                         alt="Logo"

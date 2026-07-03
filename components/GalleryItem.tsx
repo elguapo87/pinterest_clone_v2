@@ -108,7 +108,6 @@ const GalleryItem = ({ pin, fetchSaves }: GalleryProps) => {
         }
     };
 
-
     return (
         <div className="flex relative group" style={{ gridRowEnd: `span ${Math.ceil(pin.height / 100)}` }}>
             <ImageKitWrapper
