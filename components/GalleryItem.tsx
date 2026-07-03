@@ -109,13 +109,13 @@ const GalleryItem = ({ pin, fetchSaves }: GalleryProps) => {
     };
 
     return (
-        <div className="flex relative group" style={{ gridRowEnd: `span ${Math.ceil(pin.height / 100)}` }}>
+        <div className="relative group break-inside-avoid mb-4" >
             <ImageKitWrapper
                 src={pin.media}
                 alt="Pin Image"
                 width={pin.width}
                 height={pin.height}
-                className="w-full rounded-2xl object-cover"
+                className="w-full h-auto rounded-2xl"
                 imgWidth={400}
             />
 

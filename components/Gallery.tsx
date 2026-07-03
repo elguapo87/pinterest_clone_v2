@@ -18,7 +18,7 @@ type GalleryProps = {
   search?: string;
   initialPins?: Pin[];
   boardId?: string;
-  fetchSaves?: () => Promise<void>; 
+  fetchSaves?: () => Promise<void>;
 };
 
 const Gallery = ({ search, initialPins, boardId, fetchSaves }: GalleryProps) => {
@@ -124,9 +124,14 @@ const Gallery = ({ search, initialPins, boardId, fetchSaves }: GalleryProps) => 
 
   return (
     <div
-      className="grid max-[475px]:grid-cols-1 max-[798px]:grid-cols-2 max-[1035px]:grid-cols-3
-        max-[1272px]:grid-cols-4 max-[1509px]:grid-cols-5 max-[1746px]:grid-cols-6
-        min-[1746px]:grid-cols-7 gap-4 auto-rows-[10px]"
+      className="columns-1
+        sm:columns-2
+        md:columns-3
+        lg:columns-4
+        xl:columns-5
+        2xl:columns-6
+        gap-4
+        space-y-4"
     >
       {
         pins.length === 0 ? (
