@@ -43,15 +43,17 @@ const TopBar = () => {
     }, []);
 
     return (
-        <div className="my-4 mx-0 flex items-center gap-4">
+        <div className="my-4 mx-0 flex items-center gap-2 md:gap-4">
             {/* SEARCH */}
             {!showSearch && (
-                <div className="flex-1 bg-[#f1f1f1] rounded-2xl p-4 flex items-center gap-4">
+                <div 
+                    className="max-md:w-1/2 flex-1 bg-[#f1f1f1] rounded-2xl p-2 md:p-4 flex items-center
+                        gap-2.5 md:gap-4">
                     <Image src="/search.svg" alt="Search" width={16} height={16} />
                     <input
                         onChange={(e) => setSearch(e.target.value)}
                         value={search}
-                        className="flex-1 bg-transparent border-none outline-none text-[18px]"
+                        className="flex-1 bg-transparent border-none outline-none text-base md:text-[18px]"
                         type="text"
                         placeholder="Search..."
                     />
