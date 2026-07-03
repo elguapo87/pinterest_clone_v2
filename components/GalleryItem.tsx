@@ -8,13 +8,16 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 
 type GalleryProps = {
-    id: string;
-    media: string;
-    width: number;
-    height: number;
+    pin: {
+        id: string;
+        media: string;
+        width: number;
+        height: number;
+    }
+    fetchSaves?: () => Promise<void>;
 };
 
-const GalleryItem = ({ pin }: { pin: GalleryProps }) => {
+const GalleryItem = ({ pin, fetchSaves }: GalleryProps) => {
     const authContext = useContext(AuthContext);
     if (!authContext) throw new Error("GalleryItem must be within AuthContextProvider");
     const { user } = authContext;
@@ -58,6 +61,7 @@ const GalleryItem = ({ pin }: { pin: GalleryProps }) => {
 
             if (data.success) {
                 setSaved(data.saved);
+                await fetchSaves?.();
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -66,7 +70,7 @@ const GalleryItem = ({ pin }: { pin: GalleryProps }) => {
         }
     };
 
-    const handleDownload = async () => {                                                 
+    const handleDownload = async () => {
         if (!pin.media) return;
 
         try {
@@ -93,7 +97,7 @@ const GalleryItem = ({ pin }: { pin: GalleryProps }) => {
         }
     };
 
-    const handleShare = () => {                                                                       
+    const handleShare = () => {
         const frontendUrl = window.location.origin;
         const pinUrl = `${frontendUrl}/pin/${pin.id}`;
 
@@ -139,13 +143,13 @@ const GalleryItem = ({ pin }: { pin: GalleryProps }) => {
                 >
                     <Image src="/share.svg" alt="Share" width={20} height={20} className="w-5 h-5" />
                 </button>
-               <button
-                    onClick={handleDownload}                                                             
+                <button
+                    onClick={handleDownload}
                     className="w-8 h-8 rounded-full bg-white flex items-center justify-center
                         border-none cursor-pointer hover:bg-[#f1f1f1]"
                 >
-                    <Image src="/download.svg" alt="Download" width={20} height={20} className="w-5 h-5" />         
-                </button>  
+                    <Image src="/download.svg" alt="Download" width={20} height={20} className="w-5 h-5" />
+                </button>
             </div>
         </div>
     )

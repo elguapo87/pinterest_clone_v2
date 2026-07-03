@@ -375,12 +375,12 @@ const UpdatePageWrapper = () => {
             </div>
 
             {type === "created" && (
-                <Gallery key="created" initialPins={profile.pins} />
+                <Gallery key="created" initialPins={profile.pins} fetchSaves={fetchSaves} />
             )}
 
             {type === "saved" && (
                 saved.length > 0 ? (
-                    <Gallery key="saved" initialPins={saved} />
+                    <Gallery key="saved" initialPins={saved} fetchSaves={fetchSaves} />
                 ) : (
                     <h1>No saved pins</h1>
                 )

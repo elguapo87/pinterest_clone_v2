@@ -18,9 +18,10 @@ type GalleryProps = {
   search?: string;
   initialPins?: Pin[];
   boardId?: string;
+  fetchSaves?: () => Promise<void>; 
 };
 
-const Gallery = ({ search, initialPins, boardId }: GalleryProps) => {
+const Gallery = ({ search, initialPins, boardId, fetchSaves }: GalleryProps) => {
 
   const [pins, setPins] = useState<Pin[]>(initialPins || []);
   const [loading, setLoading] = useState(false);
@@ -138,7 +139,7 @@ const Gallery = ({ search, initialPins, boardId }: GalleryProps) => {
           </p>
         ) : (
           pins.map((pin) => (
-            <GalleryItem key={pin.id} pin={pin} />
+            <GalleryItem key={pin.id} pin={pin} fetchSaves={fetchSaves} />
           ))
         )
       }
