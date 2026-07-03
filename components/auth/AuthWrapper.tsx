@@ -36,7 +36,7 @@ const AuthWrapper = () => {
             <div className="w-screen h-screen flex items-center justify-center">
                 {/* AUTH CONTAINER */}
                 <div
-                    className="relative flex flex-col items-center justify-center gap-8 p-8 rounded-4xl
+                    className="relative flex flex-col items-center justify-center gap-4 md:gap-8 p-6 md:p-8 rounded-4xl
                     shadow-[0px_0px_10px_0px_rgba(0,0,0,0.1)]"
                 >
 
@@ -74,7 +74,7 @@ const AuthWrapper = () => {
                                 <input
                                     onChange={(e) => setUsername(e.target.value)}
                                     value={username}
-                                    className="p-3 border-2 border-[#e0e0e0] rounded-2xl"
+                                    className="p-2 md:p-3 border-2 border-[#e0e0e0] rounded-2xl max-md:text-sm"
                                     type="text"
                                     placeholder="Username"
                                     required
@@ -86,7 +86,7 @@ const AuthWrapper = () => {
                                 <input
                                     onChange={(e) => setDisplayName(e.target.value)}
                                     value={displayName}
-                                    className="p-3 border-2 border-[#e0e0e0] rounded-2xl"
+                                    className="p-2 md:p-3 border-2 border-[#e0e0e0] rounded-2xl max-md:text-sm"
                                     type="name"
                                     placeholder="Name"
                                     required
@@ -98,7 +98,7 @@ const AuthWrapper = () => {
                                 <input
                                     onChange={(e) => setEmail(e.target.value)}
                                     value={email}
-                                    className="p-3 border-2 border-[#e0e0e0] rounded-2xl"
+                                    className="p-2 md:p-3 border-2 border-[#e0e0e0] rounded-2xl max-md:text-sm"
                                     type="email"
                                     placeholder="Email"
                                     required
@@ -110,7 +110,7 @@ const AuthWrapper = () => {
                                 <input
                                     onChange={(e) => setPassword(e.target.value)}
                                     value={password}
-                                    className="p-3 border-2 border-[#e0e0e0] rounded-2xl"
+                                    className="p-2 md:p-3 border-2 border-[#e0e0e0] rounded-2xl max-md:text-sm"
                                     type="password"
                                     placeholder="Password"
                                     required
@@ -118,8 +118,8 @@ const AuthWrapper = () => {
                             </div>
 
                             <button
-                                className="bg-[#e50829] p-3 border-none rounded-4xl text-white
-                                cursor-pointer font-bold"
+                                className="bg-[#e50829] p-2 md:p-3 border-none rounded-4xl text-white
+                                cursor-pointer font-bold max-md:text-sm"
                                 type="submit"
                                 disabled={authLoading}
                             >
@@ -137,7 +137,7 @@ const AuthWrapper = () => {
                                 <input
                                     onChange={(e) => setEmail(e.target.value)}
                                     value={email}
-                                    className="p-3 border-2 border-[#e0e0e0] rounded-2xl"
+                                    className="p-2 md:p-3 border-2 border-[#e0e0e0] rounded-2xl max-md:text-sm"
                                     type="email"
                                     placeholder="Email"
                                     required
@@ -149,7 +149,7 @@ const AuthWrapper = () => {
                                 <input
                                     onChange={(e) => setPassword(e.target.value)}
                                     value={password}
-                                    className="p-3 border-2 border-[#e0e0e0] rounded-2xl"
+                                    className="p-2 md:p-3 border-2 border-[#e0e0e0] rounded-2xl max-md:text-sm"
                                     type="password"
                                     placeholder="Password"
                                     required
@@ -157,8 +157,8 @@ const AuthWrapper = () => {
                             </div>
 
                             <button
-                                className="bg-[#e50829] p-3 border-none rounded-4xl text-white
-                                cursor-pointer font-bold"
+                                className="bg-[#e50829] p-2 md:p-3 border-none rounded-4xl text-white
+                                cursor-pointer font-bold max-md:text-sm"
                                 type="submit"
                                 disabled={authLoading}
                             >
