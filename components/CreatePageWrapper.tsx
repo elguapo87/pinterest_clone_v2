@@ -96,7 +96,7 @@ const CreatePageWrapper = () => {
                 if (data.success) {
                     setTextOptions(initialTextOptions);
                     setCanvasOptions(initialCanvasOptions);
-                    
+
                     setMedia(null);
                     setPreviewImage(null);
                     setHasEdited(false);
@@ -143,7 +143,7 @@ const CreatePageWrapper = () => {
             <form onSubmit={handleCreate}>
                 {/* CREATE TOP */}
                 <div className="border-y border-[#e9e9e9] py-4 px-0 flex items-center justify-between">
-                    <h1 className="text-[20px] font-medium">Create Pin</h1>
+                    <h1 className="text-[20px] font-medium">{isEditing ? "Design your Pin" : "Create Pin"}</h1>
                     <button
                         type="submit"
                         className="bg-[#e50829] text-white font-medium border-none outline-none py-3 px-4
