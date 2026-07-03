@@ -64,8 +64,8 @@ const UserButton = ({ showSearch }: { showSearch: boolean }) => {
                 </div>
             ) : (
                 <div>
-                    <Link href="/auth" className="text-[18px] p-4 rounded-4xl hover:bg-[#f1f1f1]">
-                        Login / Sign Up
+                    <Link href="/auth" className="text-[13px] md:text-[18px] md:p-4 rounded-4xl hover:bg-[#f1f1f1]">
+                        Login<span className="max-md:hidden">{" "}</span><span>/</span><span className="max-md:hidden">{" "}</span>Sign Up
                     </Link>
                 </div>
             )}
