@@ -209,6 +209,23 @@ const PostInteractions = ({ pinId, pinOwnerId, pinMedia }: PostWrapperProps) => 
                             />
                             Download
                         </button>
+
+                        {user?.id === pinOwnerId && (
+                            <button
+                                onClick={() => router.push(`/pin/edit/${pinId}`)}
+                                className="cursor-pointer hover:text-black hover:scale-101 flex items-center gap-1"
+                            >
+                                <Image
+                                    src="/edit.svg"
+                                    alt="Delete Icon"
+                                    width={18}
+                                    height={18}
+                                    className="size-4"
+                                />
+                                Edit
+                            </button>
+                        )}
+
                         {user?.id === pinOwnerId && (
                             <button
                                 onClick={handleDelete}
