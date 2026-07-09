@@ -103,8 +103,6 @@ const EditPinWrapper = () => {
         fetchPin();
     }, [id]);
 
-    console.log(pin);
-
     useEffect(() => {
         if (!pin) return;
 
@@ -234,7 +232,7 @@ const EditPinWrapper = () => {
                                 ? "Publishing..."
                                 : isEditing
                                     ? "Done"
-                                    : "Save"
+                                    : "Update"
                         }
                     </button>
                 </div>

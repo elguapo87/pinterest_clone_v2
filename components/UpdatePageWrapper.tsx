@@ -101,6 +101,13 @@ const UpdatePageWrapper = () => {
     }, [profileUsername]);
 
     useEffect(() => {
+        if (!profile) return
+
+        setUsername(profile.username);
+        setDisplayName(profile.displayName);
+    }, [profile]);
+
+    useEffect(() => {
         if (!profileUsername) return;
 
         const fetchFollowingData = async () => {
@@ -274,7 +281,6 @@ const UpdatePageWrapper = () => {
                             onChange={(e) => setUsername(e.target.value)}
                             value={username}
                             type="text"
-                            placeholder={profile.username}
                             className="border-b border-gray-600 outline-none"
                         />
                         <div
@@ -306,7 +312,6 @@ const UpdatePageWrapper = () => {
                             onChange={(e) => setDisplayName(e.target.value)}
                             value={displayName}
                             type="text"
-                            placeholder={profile.displayName}
                             className="border-b border-gray-600 outline-none"
                         />
                         <div
