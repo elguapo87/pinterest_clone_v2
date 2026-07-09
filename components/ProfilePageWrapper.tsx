@@ -154,6 +154,17 @@ const ProfilePageWrapper = () => {
         router.push(`/messages/${profile?.id}`)
     };
 
+     const handleShare = () => {
+        const frontEndUrl = window.location.origin;
+        const pinUrl = `${frontEndUrl}/profile/${username}`;
+
+        if (navigator.share) {
+            navigator.share({ url: pinUrl, text: "Check out this image" });
+        } else {
+            alert("Share not supported on this browser.")
+        }
+    };
+
     if (!profile && loading) return null;
 
     return profile ? (
@@ -174,7 +185,14 @@ const ProfilePageWrapper = () => {
             </div>
             {/* PROFILE INTERACTIONS */}
             <div className="flex items-center gap-8">
-                <Image src="/share.svg" alt="Share Icon" width={22} height={22} />
+                <Image
+                    onClick={handleShare} 
+                    src="/share.svg" 
+                    alt="Share Icon" 
+                    width={22} 
+                    height={22} 
+                    className="cursor-pointer" 
+                />
                 {/* PROFILE BUTTONS */}
                 <div className="flex gap-4">
                     {user?.id !== profile.id && (
@@ -198,7 +216,6 @@ const ProfilePageWrapper = () => {
                         </button>
                     )}
                 </div>
-                <Image src="/more.svg" alt="More Icon" width={22} height={22} />
             </div>
 
             {/* PROFILE OPTIONS */}
