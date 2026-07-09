@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
         const board = form.get("board");
         const tags = form.get("tags") as string;
         const media = form.get("media") as File | null;
+        const isSensitive = form.get("isSensitive") === "true";
 
         const textOptions = form.get("textOptions") as string;
         const canvasOptions = form.get("canvasOptions") as string;
@@ -195,7 +196,8 @@ export async function POST(req: NextRequest) {
                 userId: user.id,
                 boardId,
                 textOptions: parsedTextOptions,
-                canvasOptions: parsedCanvasOptions
+                canvasOptions: parsedCanvasOptions,
+                isSensitive
             }
         });
 

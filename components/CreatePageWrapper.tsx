@@ -32,6 +32,7 @@ const CreatePageWrapper = () => {
     const [boards, setBoards] = useState<Board[]>([]);
     const [selectedBoard, setSelectedBoard] = useState("");
     const [tags, setTags] = useState("");
+    const [isSensitive, setIsSensitive] = useState(false);
 
     const [previewImage, setPreviewImage] = useState<{
         url: string;
@@ -82,6 +83,7 @@ const CreatePageWrapper = () => {
                 formData.append("link", link);
                 formData.append("board", selectedBoard);
                 formData.append("tags", tags);
+                formData.append("isSensitive", String(isSensitive));
 
                 if (hasEdited) {
                     formData.append("textOptions", JSON.stringify(textOptions));
@@ -167,75 +169,91 @@ const CreatePageWrapper = () => {
                         className="mt-8 flex justify-center gap-16 max-[1104px]:flex-col
                              max-[1104px]:items-center max-[1104px]:mb-16"
                     >
-                        {/* UPLOAD */}
-                        <div
-                            className="bg-[#e9e9e9] cursor-pointer text-[18px] flex items-center justify-center
+                        <div className="flex flex-col items-center gap-5">
+                            {/* UPLOAD */}
+                            <div
+                                className="bg-[#e9e9e9] cursor-pointer text-[18px] flex items-center justify-center
                                 rounded-4xl border-dashed border-[#dddddd] w-93.75 h-143.5 p-4
                                 relative max-[475px]:w-full"
 
-                        >
-                            {media ? (
-                                <div className="relative w-93.75 h-143.5 max-[475px]:w-full">
-                                    <Image
-                                        src={URL.createObjectURL(media)}
-                                        alt="Preview Image"
-                                        fill
-                                        className="object-cover rounded-4xl"
-                                    />
-                                    <div
-                                        onClick={() => {
-                                            setIsEditing(true);
-                                            setHasEdited(true);
-                                        }}
-                                        className="absolute top-4 right-4 bg-white flex items-center justify-center
-                                            p-1.5 rounded-full cursor-pointer w-10 h-10"
-                                    >
+                            >
+                                {media ? (
+                                    <div className="relative w-93.75 h-143.5 max-[475px]:w-full">
                                         <Image
-                                            src="/edit.svg"
-                                            alt="Edit Image"
-                                            width={40}
-                                            height={40}
+                                            src={URL.createObjectURL(media)}
+                                            alt="Preview Image"
+                                            fill
+                                            className="object-cover rounded-4xl"
                                         />
-                                    </div>
-                                    <div
-                                        onClick={(e) => { e.stopPropagation(); setMedia(null); }}
-                                        className="absolute top-4 left-4 font-semibold text-gray-800 
-                                            hover:scale-101 cursor-pointer"
-                                    >
-                                        X
-                                    </div>
-                                </div>
-                            ) : (
-                                <>
-                                    <label
-                                        htmlFor="media"
-                                        className="relative flex flex-col items-center gap-4 cursor-pointer group"
-                                    >
-                                        <input
-                                            onChange={(e) => {
-                                                if (e.target.files) {
-                                                    setMedia(e.target.files[0])
-                                                }
+                                        <div
+                                            onClick={() => {
+                                                setIsEditing(true);
+                                                setHasEdited(true);
                                             }}
-                                            type="file"
-                                            accept="image/png, image/jpeg"
-                                            id="media"
-                                            hidden
-                                        />
-                                        <Image
-                                            src="/upload.svg"
-                                            alt="Upload Image"
-                                            width={32}
-                                            height={32}
-                                            className={media ? "w-30 h-30" : "w-8 h-8"}
-                                        />
-                                        <span>Chose a file</span>
-                                    </label>
-                                    <div className="absolute bottom-8 text-[13px] text-center text-gray-600">
-                                        We recommend uing high quality .jpg files less then 20 files less then 200 MB
+                                            className="absolute top-4 right-4 bg-white flex items-center justify-center
+                                            p-1.5 rounded-full cursor-pointer w-10 h-10"
+                                        >
+                                            <Image
+                                                src="/edit.svg"
+                                                alt="Edit Image"
+                                                width={40}
+                                                height={40}
+                                            />
+                                        </div>
+                                        <div
+                                            onClick={(e) => { e.stopPropagation(); setMedia(null); }}
+                                            className="absolute top-4 left-4 font-semibold text-gray-800 
+                                            hover:scale-101 cursor-pointer"
+                                        >
+                                            X
+                                        </div>
                                     </div>
-                                </>
-                            )}
+                                ) : (
+                                    <>
+                                        <label
+                                            htmlFor="media"
+                                            className="relative flex flex-col items-center gap-4 cursor-pointer group"
+                                        >
+                                            <input
+                                                onChange={(e) => {
+                                                    if (e.target.files) {
+                                                        setMedia(e.target.files[0])
+                                                    }
+                                                }}
+                                                type="file"
+                                                accept="image/png, image/jpeg"
+                                                id="media"
+                                                hidden
+                                            />
+                                            <Image
+                                                src="/upload.svg"
+                                                alt="Upload Image"
+                                                width={32}
+                                                height={32}
+                                                className={media ? "w-30 h-30" : "w-8 h-8"}
+                                            />
+                                            <span>Chose a file</span>
+                                        </label>
+                                        <div className="absolute bottom-8 text-[13px] text-center text-gray-600">
+                                            We recommend uing high quality .jpg files less then 20 files less then 200 MB
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* SENSITIVE FLAG */}
+                            <div className="flex items-center gap-3">
+                                <input
+                                    id="sensitive"
+                                    type="checkbox"
+                                    checked={isSensitive}
+                                    onChange={(e) => setIsSensitive(e.target.checked)}
+                                />
+
+                                <label htmlFor="sensitive">
+                                    This Pin contains sensitive content
+                                </label>
+                            </div>
                         </div>
 
                         <div className="flex flex-col gap-8 w-146 max-[768px]:w-full">

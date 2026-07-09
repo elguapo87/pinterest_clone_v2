@@ -11,9 +11,12 @@ type PostWrapperProps = {
     pinId: string;
     pinOwnerId: string;
     pinMedia: string
+    isSensitive: boolean;
+    revealed: boolean;
+    setRevealed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PostInteractions = ({ pinId, pinOwnerId, pinMedia }: PostWrapperProps) => {
+const PostInteractions = ({ pinId, pinOwnerId, pinMedia, isSensitive, revealed, setRevealed }: PostWrapperProps) => {
     const authContext = useContext(AuthContext);
     if (!authContext) throw new Error("PostInteractions must be within AuthContextProvider");
     const { user } = authContext;
@@ -181,6 +184,18 @@ const PostInteractions = ({ pinId, pinOwnerId, pinMedia }: PostWrapperProps) => 
                     height={20}
                     className="size-5 cursor-pointer"
                 />
+
+                {user?.id === pinOwnerId && isSensitive && (
+                    <Image
+                        onClick={() => setRevealed(prev => !prev)}
+                        src={revealed ? "/eye_off.svg" : "/eye.svg"}
+                        alt={revealed ? "Hide sensitive image" : "Reveal sensitive image"}
+                        width={20}
+                        height={20}
+                        className="size-5 cursor-pointer"
+                    />
+                )}
+
                 <Image
                     onClick={() => setShowMenu(prev => !prev)}
                     src="/more.svg"
@@ -195,6 +210,22 @@ const PostInteractions = ({ pinId, pinOwnerId, pinMedia }: PostWrapperProps) => 
                         className="absolute flex flex-col items-start justify-center gap-2 
                             top-8 -right-7 bg-white shadow-lg rounded-xl p-3 z-50 text-sm"
                     >
+                        {user?.id !== pinOwnerId && isSensitive && (
+                            <button
+                                onClick={() => setRevealed(prev => !prev)}
+                                className="cursor-pointer hover:text-black hover:scale-101 flex items-center gap-1"
+                            >
+                                <Image
+                                    src={revealed ? "/eye_off.svg" : "/eye.svg"}
+                                    alt={revealed ? "Hide sensitive image" : "Reveal sensitive image"}
+                                    width={16}
+                                    height={16}
+                                    className="size-4"
+                                />
+                                {revealed ? "Hide" : "Reveal"}
+                            </button>
+                        )}
+
                         <button
                             onClick={handleDownload}
                             className="cursor-pointer hover:text-black hover:scale-101 flex items-center gap-1"

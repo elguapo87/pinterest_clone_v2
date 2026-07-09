@@ -12,6 +12,7 @@ type Pin = {
   media: string;
   width: number;
   height: number;
+  isSensitive: boolean;
 };
 
 type GalleryProps = {
@@ -70,6 +71,9 @@ const Gallery = ({ search, initialPins, boardId, fetchSaves }: GalleryProps) => 
       setInitialLoading(false);
     }
   };
+
+  console.log(pins);
+
 
   useEffect(() => {
     // profile page mode                     

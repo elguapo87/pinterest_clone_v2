@@ -13,6 +13,7 @@ type GalleryProps = {
         media: string;
         width: number;
         height: number;
+        isSensitive: boolean;
     }
     fetchSaves?: () => Promise<void>;
 };
@@ -23,6 +24,7 @@ const GalleryItem = ({ pin, fetchSaves }: GalleryProps) => {
     const { user } = authContext;
 
     const [saved, setSaved] = useState(false);
+    const [revealed, setRevealed] = useState(false);
 
     useEffect(() => {
         if (!pin.id) return
@@ -115,7 +117,7 @@ const GalleryItem = ({ pin, fetchSaves }: GalleryProps) => {
                 alt="Pin Image"
                 width={pin.width}
                 height={pin.height}
-                className="w-full h-auto rounded-2xl"
+                className={`w-full h-auto rounded-2xl ${pin.isSensitive && !revealed ? "blur-md" : ""}`}
                 imgWidth={400}
             />
 
@@ -135,6 +137,21 @@ const GalleryItem = ({ pin, fetchSaves }: GalleryProps) => {
             </button>
 
             <div className="hidden group-hover:flex items-center gap-2 absolute bottom-4 right-4">
+                {pin.isSensitive && (
+                    <button
+                        onClick={() => setRevealed(prev => !prev)}
+                        className="w-8 h-8 rounded-full bg-white flex items-center justify-center
+                        border-none cursor-pointer hover:bg-[#f1f1f1]"
+                    >
+                        <Image
+                            src={revealed ? "/eye_off.svg" : "/eye.svg"}
+                            alt={revealed ? "Hide sensitive image" : "Reveal sensitive image"}
+                            width={20}
+                            height={20}
+                            className="w-5 h-5"
+                        />
+                    </button>
+                )}
                 <button
                     onClick={handleShare}
                     className="w-8 h-8 rounded-full bg-white flex items-center justify-center

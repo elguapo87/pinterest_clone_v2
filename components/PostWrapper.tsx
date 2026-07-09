@@ -20,6 +20,7 @@ type Pin = {
     description: string;
     link: string;
     tags: string[];
+    isSensitive: boolean;
     user: {
         id: string;
         username: string;
@@ -33,6 +34,7 @@ const PostWrapper = () => {
     const { id } = useParams() as { id: string };
 
     const [pin, setPin] = useState<Pin | null>(null);
+    const [revealed, setRevealed] = useState(false);
 
     const router = useRouter();
 
@@ -56,7 +58,7 @@ const PostWrapper = () => {
     }, [id]);
 
     if (!pin) return <Loader />
-    
+
     return (
         <div className="flex justify-center max-[751]:gap-2 gap-8">
             <svg
@@ -85,11 +87,21 @@ const PostWrapper = () => {
                         imgWidth={1260}
                         quality={90}
                         priority
-                        className="w-full h-full object-cover"
+                        className={`w-full h-full object-cover 
+                            ${pin.isSensitive && !revealed
+                                ? "blur-md md:blur-xl"
+                                : ""}`}
                     />
                 </div>
                 <div className="flex-1 h-full flex flex-col gap-8 p-4 overflow-hidden">
-                    <PostInteractions pinId={id} pinOwnerId={pin.user.id} pinMedia={pin.media} />
+                    <PostInteractions
+                        pinId={id}
+                        pinOwnerId={pin.user.id}
+                        pinMedia={pin.media}
+                        isSensitive={pin.isSensitive}
+                        revealed={revealed}
+                        setRevealed={setRevealed}
+                    />
                     {/* POST USER */}
                     <Link href={`/profile/${pin.user.username}`} className="flex items-center gap-2 ">
                         <ImageKitWrapper
