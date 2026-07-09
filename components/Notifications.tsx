@@ -1,3 +1,4 @@
+import { AuthContext } from "@/context/AuthContext";
 import { NotificationContext } from "@/context/NotificationContext";
 import { useClickOutside } from "@/hooks/clickOutside";
 import api from "@/lib/axios";
@@ -24,6 +25,10 @@ const Notifications = () => {
     if (!notificationContext) throw new Error("Notifications must be within NotificationContextProvider");
     const { unreadCount } = notificationContext;
 
+     const authContext = useContext(AuthContext);
+    if (!authContext) throw new Error("Notifications must be within AuthContextProvider");
+    const { user } = authContext;
+
     const [isOpen, setIsOpen] = useState(false);
     const [conversations, setConversations] = useState<Conversation[]>([]);
 
@@ -48,6 +53,11 @@ const Notifications = () => {
     }, []);
 
     const handleToggle = async () => {
+        if (!user) {
+            router.push("/auth");
+            return;
+        }
+
         const nextState = !isOpen;
 
         if (nextState) {
