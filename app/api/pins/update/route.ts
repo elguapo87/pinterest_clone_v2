@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function PUT(req: NextRequest) {
     try {
         const user = await userAuth();
+
         const { searchParams } = new URL(req.url);
         const id = searchParams.get("id") as string;
 
@@ -13,8 +14,8 @@ export async function PUT(req: NextRequest) {
         const title = form.get("title") as string;
         const description = form.get("description") as string;
         const link = form.get("link") as string;
-        const board = form.get("board");
         const tags = form.get("tags") as string;
+        const board = form.get("board");
         const media = form.get("media") as File | null;
 
         let boardId: string | null = null;
@@ -30,7 +31,7 @@ export async function PUT(req: NextRequest) {
                 return NextResponse.json({ success: false, message: "Invalid board" }, { status: 400 });
             }
 
-            boardId = existingBoard.id;
+            boardId = existingBoard.id
         }
 
         const parsedTags = tags ? tags.split(",").map((t) => t.trim()) : [];
@@ -47,7 +48,7 @@ export async function PUT(req: NextRequest) {
             description,
             link,
             tags: parsedTags,
-            boardId,
+            boardId
         };
 
         if (media) {
@@ -77,16 +78,20 @@ export async function PUT(req: NextRequest) {
             return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 403 });
         }
 
-        const updatedPin = await prisma.pin.update({
+        await prisma.pin.update({
             where: {
                 id
             },
             data: updateData
-        });
+        })
 
-        return NextResponse.json({ success: true, message: "Pin updated", pin: updatedPin }, { status: 200 });
+        return NextResponse.json({ success: true, message: "Pin updated" }, { status: 200 });
 
     } catch (error) {
         return NextResponse.json({ success: false, message: "Failed to update pin" }, { status: 500 });
     }
 }
+
+
+
+
