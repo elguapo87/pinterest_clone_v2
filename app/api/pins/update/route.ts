@@ -17,6 +17,7 @@ export async function PUT(req: NextRequest) {
         const tags = form.get("tags") as string;
         const board = form.get("board");
         const media = form.get("media") as File | null;
+        const isSensitive = form.get("isSensitive") === "true";
 
         let boardId: string | null = null;
 
@@ -43,12 +44,14 @@ export async function PUT(req: NextRequest) {
             tags: string[];
             boardId: string | null;
             media?: string;
+            isSensitive: boolean;
         } = {
             title,
             description,
             link,
             tags: parsedTags,
-            boardId
+            boardId,
+            isSensitive
         };
 
         if (media) {

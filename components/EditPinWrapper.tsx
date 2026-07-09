@@ -31,6 +31,7 @@ type Pin = {
     title: string;
     updatedAt: string | Date;
     width: number;
+    isSensitive: boolean;
 };
 
 
@@ -49,6 +50,7 @@ const EditPinWrapper = () => {
     const [selectedBoard, setSelectedBoard] = useState("");
     const [tags, setTags] = useState("");
     const [pin, setPin] = useState<Pin | null>(null);
+    const [isSensitive, setIsSensitive] = useState(false);
 
     const [previewImage, setPreviewImage] = useState<{
         url: string;
@@ -113,6 +115,7 @@ const EditPinWrapper = () => {
             width: pin.width,
             height: pin.height
         });
+        setIsSensitive(pin.isSensitive);
 
     }, [pin]);
 
@@ -127,6 +130,7 @@ const EditPinWrapper = () => {
             formData.append("link", link);
             formData.append("board", selectedBoard);
             formData.append("tags", tags);
+            formData.append("isSensitive", String(isSensitive));
 
             if (media) {
                 formData.append("media", media);
@@ -175,7 +179,7 @@ const EditPinWrapper = () => {
 
                     <div className="flex items-center gap-4 cursor-pointer">
                         <Image
-                            onClick={() => router.back()} 
+                            onClick={() => router.back()}
                             src="/arrow_back.svg"
                             alt="Arrow Back"
                             width={40}
@@ -183,14 +187,14 @@ const EditPinWrapper = () => {
                             className="size-8 md:size-10 hover:scale-105 transition-all duration-200"
                         />
 
-                    <button
-                        type="submit"
-                        className="bg-[#e50829] text-white font-medium border-none outline-none py-3 px-4
+                        <button
+                            type="submit"
+                            className="bg-[#e50829] text-white font-medium border-none outline-none py-3 px-4
                             rounded-4xl cursor-pointer text-[15px] hover:bg-[#c1011e]"
-                        disabled={loading}
-                    >
-                        {loading ? "Updating..." : "Update"}
-                    </button>
+                            disabled={loading}
+                        >
+                            {loading ? "Updating..." : "Update"}
+                        </button>
                     </div>
 
                 </div>
@@ -199,70 +203,86 @@ const EditPinWrapper = () => {
                     className="mt-8 flex justify-center gap-16 max-[1104px]:flex-col
                         max-[1104px]:items-center max-[1104px]:mb-16"
                 >
-                    {/* UPLOAD */}
-                    <div
-                        className="bg-[#e9e9e9] cursor-pointer text-[18px] flex items-center justify-center
-                                rounded-4xl border-dashed border-[#dddddd] w-93.75 h-143.5 p-4
-                                relative max-[475px]:w-full"
+                    <div className="flex flex-col items-center gap-5">
+                        {/* UPLOAD */}
+                        <div
+                            className="bg-[#e9e9e9] cursor-pointer flex items-center justify-center
+                            rounded-4xl border-dashed border-[#dddddd] w-93.75 h-143.5 p-4
+                            relative max-[475px]:w-full"
 
-                    >
-                        {previewImage && (
-                            <div className="group relative w-93.75 h-143.5 max-[475px]:w-full">
-                                <Image
-                                    src={previewImage.url}
-                                    alt="Preview Image"
-                                    fill
-                                    className="object-cover rounded-4xl"
-                                />
+                        >
+                            {previewImage && (
+                                <div className="group relative w-93.75 h-143.5 max-[475px]:w-full">
+                                    <Image
+                                        src={previewImage.url}
+                                        alt="Preview Image"
+                                        fill
+                                        className="object-cover rounded-4xl"
+                                    />
 
-                                <div
-                                    className="absolute top-0 left-0 rounded-4xl inset-0 bg-black/40 opacity-0 
-                                        group-hover:opacity-100 transition-opacity duration-200"
-                                >
-                                    <label
-                                        htmlFor="imgChange"
-                                        className="absolute inset-0 flex items-center justify-center opacity-0
-                                            group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
-                                    >
-                                        <Image
-                                            src="/upload.svg"
-                                            alt="Replace Image"
-                                            width={200}
-                                            height={200}
-                                            className="z-10 size-50"
-                                        />
-                                        <input
-                                            onChange={(e) => setMedia(e.target.files && e.target.files[0])}
-                                            type="file"
-                                            accept="image/*"
-                                            hidden
-                                            id="imgChange"
-                                        />
-                                    </label>
-                                </div>
-
-                                {media && (
                                     <div
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setMedia(null);
-                                            if (pin) {
-                                                setPreviewImage({
-                                                    url: pin.media,
-                                                    width: pin.width,
-                                                    height: pin.height
-                                                });
-                                            }
-                                        }}
-                                        className="absolute top-4 left-4 font-semibold text-gray-800 
+                                        className="absolute top-0 left-0 rounded-4xl inset-0 bg-black/40 opacity-0 
+                                        group-hover:opacity-100 transition-opacity duration-200"
+                                    >
+                                        <label
+                                            htmlFor="imgChange"
+                                            className="absolute inset-0 flex items-center justify-center opacity-0
+                                            group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
+                                        >
+                                            <Image
+                                                src="/upload.svg"
+                                                alt="Replace Image"
+                                                width={200}
+                                                height={200}
+                                                className="z-10 size-50"
+                                            />
+                                            <input
+                                                onChange={(e) => setMedia(e.target.files && e.target.files[0])}
+                                                type="file"
+                                                accept="image/*"
+                                                hidden
+                                                id="imgChange"
+                                            />
+                                        </label>
+                                    </div>
+
+                                    {media && (
+                                        <div
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setMedia(null);
+                                                if (pin) {
+                                                    setPreviewImage({
+                                                        url: pin.media,
+                                                        width: pin.width,
+                                                        height: pin.height
+                                                    });
+                                                }
+                                            }}
+                                            className="absolute top-4 left-4 font-semibold text-gray-800 
                                             hover:scale-101 cursor-pointer text-xl size-10 bg-stone-100
                                             rounded-full flex items-center justify-center border border-gray-200"
-                                    >
-                                        X
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                                        >
+                                            X
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* SENSITIVE FLAG */}
+                        <div className="flex items-center gap-3">
+                            <input
+                                id="sensitive"
+                                type="checkbox"
+                                checked={isSensitive}
+                                onChange={(e) => setIsSensitive(e.target.checked)}
+                            />
+
+                            <label htmlFor="sensitive">
+                                This Pin contains sensitive content
+                            </label>
+                        </div>
                     </div>
 
                     <div className="flex flex-col gap-8 w-146 max-[768px]:w-full">
