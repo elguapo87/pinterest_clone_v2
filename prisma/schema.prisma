@@ -35,6 +35,7 @@ model Pin {
   description   String
   link          String?
   tags          String[]
+  isSensitive   Boolean   @default(false)
   textOptions   Json?
   canvasOptions Json?
   userId        String
