@@ -18,7 +18,8 @@ const TopBar = () => {
         pathName.startsWith("/messages") ||
         pathName.startsWith("/create") ||
         pathName.startsWith("/boards") ||
-        pathName.startsWith("/profile");
+        pathName.startsWith("/profile") || 
+        pathName.startsWith("/pin");
 
     useEffect(() => {
         if (!initialized) {
