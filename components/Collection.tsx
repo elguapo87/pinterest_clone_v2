@@ -20,11 +20,6 @@ type Board = {
 }[];
 
 const Collection = ({ boards }: { boards: Board }) => {
-
-    console.log(boards);
-
-
-
     return (
         <div
             className="w-full grid max-[475px]:grid-cols-1 max-[798px]:grid-cols-2 max-[1035px]:grid-cols-3
@@ -35,17 +30,15 @@ const Collection = ({ boards }: { boards: Board }) => {
             {boards.map((board) => {
                 const firstPin = board.pins[0];
 
-                console.log(firstPin);
-                
-
                 return (
                     <Link href={`/search?boardId=${board.id}`} key={board.id} className="mb-8 cursor-pointer">
                         <ImageKitWrapper
-                            src={firstPin.media || "/pinterest_clone/general/empty-board.png"}
+                            src={firstPin?.media || "/pinterest_clone/general/empty-board.png"}
                             alt="Pin-Image"
                             width={400}
                             height={400}
-                            className={`w-full h-full object-cover rounded-2xl ${firstPin.isSensitive ? "blur-md" : ""}`}
+                            className={`w-full h-full object-cover rounded-2xl 
+                                ${firstPin?.isSensitive ? "blur-md" : ""}`}
                             imgWidth={400}
                         />
                         {/* COLLECTION INFO */}

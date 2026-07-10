@@ -11,6 +11,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Loader from "./Loader";
 import { AuthContext } from "@/context/AuthContext";
+import { format } from "timeago.js";
 
 type Profile = {
     id: string;
@@ -181,6 +182,7 @@ const ProfilePageWrapper = () => {
             />
             <h1 className="text-4xl font-medium">{profile.username}</h1>
             <span className="font-light text-gray-600">@{profile.displayName}</span>
+            <span className="font-light text-sm text-gray-500">Joined {format(profile.createdAt)}</span>
             <div className="font-medium">
                 {followersCount} {followersCount === 1 ? "follower" : "followers"} &bull; {""}
                 {followingsCount} {followingsCount === 1 ? "following" : "followings"}

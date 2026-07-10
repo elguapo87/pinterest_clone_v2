@@ -10,6 +10,7 @@ import Loader from "./Loader";
 import Gallery from "./Gallery";
 import { AuthContext } from "@/context/AuthContext";
 import Collection from "./Collection";
+import { format } from "timeago.js";
 
 type Profile = {
     id: string;
@@ -28,6 +29,7 @@ type Profile = {
         description: string;
         link?: string;
         tags: string[];
+        isSensitive: boolean;
     }[];
     boards: {
         id: string;
@@ -39,6 +41,7 @@ type Profile = {
             media: string;
             width: number;
             height: number;
+            isSensitive: boolean;
         }[];
         _count: {
             pins: number;
@@ -52,6 +55,7 @@ type SavedPin = {
         media: string;
         width: number;
         height: number;
+        isSensitive: boolean;
     };
 };
 
@@ -336,6 +340,8 @@ const UpdatePageWrapper = () => {
                         </div>
                     </div>
                 )}
+
+                <span className="font-light text-sm text-gray-500">Joined {format(profile.createdAt)}</span>
 
                 {editingField !== null && (
                     <button
