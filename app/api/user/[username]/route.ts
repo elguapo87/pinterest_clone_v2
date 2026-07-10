@@ -28,7 +28,8 @@ export async function GET(req: Request, context: { params: Promise<{ username: s
                                 id: true,
                                 media: true,
                                 width: true,
-                                height: true
+                                height: true,
+                                isSensitive: true
                             }
                         },
                         _count: {

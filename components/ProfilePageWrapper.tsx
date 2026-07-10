@@ -29,6 +29,7 @@ type Profile = {
         description: string;
         link?: string;
         tags: string[];
+        isSensitive: boolean;
     }[];
     boards: {
         id: string;
@@ -40,6 +41,7 @@ type Profile = {
             media: string;
             width: number;
             height: number;
+            isSensitive: boolean;
         }[];
         _count: {
             pins: number;
