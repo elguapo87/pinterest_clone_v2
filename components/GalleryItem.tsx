@@ -75,6 +75,11 @@ const GalleryItem = ({ pin, fetchSaves }: GalleryProps) => {
     const handleDownload = async () => {
         if (!pin.media) return;
 
+        if (pin.isSensitive && !revealed) {
+            toast.error("Reveal this image before downloading.");
+            return;
+        }
+
         try {
             const response = await fetch(pin.media);
             const blob = await response.blob();
@@ -161,8 +166,12 @@ const GalleryItem = ({ pin, fetchSaves }: GalleryProps) => {
                 </button>
                 <button
                     onClick={handleDownload}
-                    className="w-8 h-8 rounded-full bg-white flex items-center justify-center
-                        border-none cursor-pointer hover:bg-[#f1f1f1]"
+                    className={`w-8 h-8 rounded-full bg-white flex items-center justify-center
+                        border-none hover:bg-[#f1f1f1] 
+                        ${pin.isSensitive && !revealed 
+                            ? "opacity-50 cursor-not-allowed" 
+                            : "cursor-pointer"
+                        }`}
                 >
                     <Image src="/download.svg" alt="Download" width={20} height={20} className="w-5 h-5" />
                 </button>

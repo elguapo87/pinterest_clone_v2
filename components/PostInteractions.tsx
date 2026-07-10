@@ -116,6 +116,11 @@ const PostInteractions = ({ pinId, pinOwnerId, pinMedia, isSensitive, revealed, 
     const handleDownload = async () => {
         if (!pinMedia) return;
 
+        if (isSensitive && !revealed) {
+            toast.error("Reveal this image before downloading.");
+            return;
+        }
+
         try {
             const response = await fetch(pinMedia);
             const blob = await response.blob();
@@ -228,7 +233,11 @@ const PostInteractions = ({ pinId, pinOwnerId, pinMedia, isSensitive, revealed, 
 
                         <button
                             onClick={handleDownload}
-                            className="cursor-pointer hover:text-black hover:scale-101 flex items-center gap-1"
+                            className={`hover:text-black hover:scale-101 flex items-center gap-1
+                                ${isSensitive && !revealed 
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : "cursor-pointer"
+                                }`}
                         >
                             <Image
                                 src="/download.svg"
