@@ -25,7 +25,7 @@ const UserButton = ({ showSearch }: { showSearch: boolean }) => {
             className={` ${showSearch ? "ml-auto" : ""}`}
         >
             {user ? (
-                <div className="relative flex items-center md:gap-4">
+                <div className="relative flex items-center gap-2 md:gap-4">
                     <Image
                         src={user.avatar || "/noAvatar.png"}
                         alt="Avatar"
