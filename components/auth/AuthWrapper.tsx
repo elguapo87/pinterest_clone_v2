@@ -4,7 +4,7 @@ import ImageKitWrapper from "@/components/ImageKitWrapper"
 import { AuthContext } from "@/context/AuthContext"
 import { useContext, useState } from "react"
 import GuestGuard from "./GuestGuard"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Image from "next/image"
 
 const AuthWrapper = () => {
@@ -19,16 +19,19 @@ const AuthWrapper = () => {
 
     const [isRegister, setIsRegister] = useState(false);
 
+    const searchParams = useSearchParams();
+    const redirect = searchParams.get("redirect");
+
     const router = useRouter();
 
     const handleRegister = async (e: React.SyntheticEvent) => {
         e.preventDefault();
-        await register({ username, displayName, email, password });
+        await register({ username, displayName, email, password }, redirect || "/");
     };
 
     const handleLogin = async (e: React.SyntheticEvent) => {
         e.preventDefault();
-        await login({ email, password });
+        await login({ email, password }, redirect || "/");
     };
 
     return (

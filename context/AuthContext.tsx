@@ -32,8 +32,8 @@ interface AuthContextType {
     setUser: React.Dispatch<React.SetStateAction<User | null>>;
     loading: boolean;
     authLoading: boolean;
-    register: (credentials: RegisterData) => Promise<void>;
-    login: (credentials: LoginData) => Promise<void>;
+    register: (credentials: RegisterData, redirect?: string) => Promise<void>;
+    login: (credentials: LoginData, redirect?: string) => Promise<void>;
     logout: () => Promise<void>;
 }
 
@@ -65,7 +65,7 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
         fetchUser();
     }, []);
 
-    const register = async (credentials: RegisterData) => {
+    const register = async (credentials: RegisterData, redirect?: string) => {
         try {
             setAuthLoading(true);
             const { data } = await api.post("/auth/register", credentials);
@@ -73,7 +73,7 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
             if (data.success) {
                 setUser(data.user);
                 toast.success(data.message);
-                router.replace("/");
+                router.replace(redirect || "/");
 
             } else {
                 toast.error(data.message);
@@ -88,7 +88,7 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
-    const login = async (credentials: LoginData) => {
+    const login = async (credentials: LoginData, redirect?: string) => {
         try {
             setAuthLoading(true);
             const { data } = await api.post("/auth/login", credentials);
@@ -96,7 +96,7 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
             if (data.success) {
                 setUser(data.user);
                 toast.success(data.message);
-                router.replace("/");
+                router.replace(redirect || "/");
 
             } else {
                 toast.error(data.message);

@@ -72,9 +72,6 @@ const Gallery = ({ search, initialPins, boardId, fetchSaves }: GalleryProps) => 
     }
   };
 
-  console.log(pins);
-
-
   useEffect(() => {
     // profile page mode                     
     if (initialPins) {
