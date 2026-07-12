@@ -230,6 +230,7 @@ const UpdatePageWrapper = () => {
                         alt="User Avatar"
                         width={100}
                         height={100}
+                        loading="eager"
                         className="size-25 rounded-full object-cover"
                     />
                     <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 

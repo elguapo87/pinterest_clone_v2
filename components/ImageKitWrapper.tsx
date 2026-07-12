@@ -9,6 +9,7 @@ type ImageKitProps = {
     quality?: number | "auto";
     imgWidth?: number;
     priority?: boolean;
+    placeholder?: boolean;
 };
 
 const ImageKitWrapper = ({
@@ -19,12 +20,13 @@ const ImageKitWrapper = ({
     className,
     quality = "auto",
     imgWidth = 400,
-    priority = false
+    priority = false,
+    placeholder = true
 }: ImageKitProps) => {
 
     const urlEndpoint = process.env.NEXT_PUBLIC_URL_ENDPOINT;
 
-     const blurUrl = `${urlEndpoint}${src}?tr=w-20,q-10,bl-30`;
+    const blurUrl = `${urlEndpoint}${src}?tr=w-20,q-10,bl-30`;
 
     return (
         <Image
@@ -38,8 +40,8 @@ const ImageKitWrapper = ({
             transformation={[
                 `w-${imgWidth},q-${quality},f-auto,dpr-auto` as any
             ]}
-            placeholder={priority ? undefined : "blur"}
-            blurDataURL={blurUrl}
+            placeholder={placeholder ? "blur" : undefined}
+            blurDataURL={placeholder ? blurUrl : undefined}
         />
     )
 }
