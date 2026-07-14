@@ -1,5 +1,6 @@
 // lib/prisma-errors.ts
-import { Prisma } from "@prisma/client";
+
+import { Prisma } from "@/app/generated/prisma/client";
 
 export type PrismaErrorResponse = {
     message: string;
