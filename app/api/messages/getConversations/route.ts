@@ -2,11 +2,33 @@ import { optionalUserAuth } from "@/lib/optionalUserAuth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+type MessageWithUsers = {
+    id: string;
+    content: string;
+    senderId: string;
+    receiverId: string;
+    isRead: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    sender: {
+        id: string;
+        username: string;
+        avatar: string | null;
+        displayName: string;
+    };
+    receiver: {
+        id: string;
+        username: string;
+        avatar: string | null;
+        displayName: string;
+    };
+};
+
 export async function GET() {
     try {
         const user = await optionalUserAuth();
 
-        let messages;
+        let messages: MessageWithUsers[] = [];
 
         if (user) {
             messages = await prisma.message.findMany({

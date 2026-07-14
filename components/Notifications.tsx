@@ -25,7 +25,7 @@ const Notifications = () => {
     if (!notificationContext) throw new Error("Notifications must be within NotificationContextProvider");
     const { unreadCount } = notificationContext;
 
-     const authContext = useContext(AuthContext);
+    const authContext = useContext(AuthContext);
     if (!authContext) throw new Error("Notifications must be within AuthContextProvider");
     const { user } = authContext;
 
@@ -102,7 +102,7 @@ const Notifications = () => {
                         rounded-2xl shadow-lg flex flex-col items-start justify-center w-max"
                 >
                     {unreadConversations.length === 0 ? (
-                        <p className="text-gray-600">All up to date</p>   
+                        <p className="text-gray-600">All up to date</p>
                     ) : (
                         unreadConversations.map((conv) => (
                             <div
