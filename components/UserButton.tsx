@@ -39,7 +39,8 @@ const UserButton = ({ showSearch }: { showSearch: boolean }) => {
                         alt="Arrow"
                         width={16}
                         height={16}
-                        className="size-3 md:size-4 rounded-full object-cover cursor-pointer"
+                        className={`size-3 md:size-4 rounded-full object-cover cursor-pointer
+                            ${open ? "rotate-180 transition-all ease-in-out duration-200" : ""}`}
                     />
 
                     {open && (
