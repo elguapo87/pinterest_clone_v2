@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { userAuth } from "@/lib/userAuth";
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
-import fs from "fs";
 
 export async function POST(req: NextRequest) {
     try {
@@ -128,6 +127,14 @@ export async function POST(req: NextRequest) {
             const textTop = parsedTextOptions.top * scaleY;
             const fontSize = parsedTextOptions.fontSize * scaleX;
 
+            console.log({
+                scaleX,
+                scaleY,
+                fontSize,
+                textLeft,
+                textTop
+            });
+
             const svgText = `
                 <svg width="${targetWidth}" height="${targetHeight}">
                     <style>
@@ -149,7 +156,6 @@ export async function POST(req: NextRequest) {
                 </svg>
             `;
 
-            fs.writeFileSync("debug.svg", svgText);
 
             finalBuffer = await sharp(resizedImageBuffer)
                 .composite([
@@ -191,6 +197,11 @@ export async function POST(req: NextRequest) {
 
         const parsedTags = tags ? tags.split(",").map((t) => t.trim()) : [];
 
+        console.log({
+            resizedSize: resizedImageBuffer.length,
+            finalSize: finalBuffer.length
+        });
+
         const pin = await prisma.pin.create({
             data: {
                 title,
@@ -211,6 +222,14 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: true, message: "Pin added", pin }, { status: 201 });
 
     } catch (error) {
-        return NextResponse.json({ success: false, message: "Failed to create pin" }, { status: 500 });
+        console.error("Create pin error:", error);
+
+        return NextResponse.json(
+            {
+                success: false,
+                message: "Failed to create pin"
+            },
+            { status: 500 }
+        );
     }
 }
