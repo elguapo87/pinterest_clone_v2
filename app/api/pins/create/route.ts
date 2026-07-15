@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { userAuth } from "@/lib/userAuth";
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
+import fs from "fs";
+import path from "path";
 
 export async function POST(req: NextRequest) {
     try {
@@ -104,10 +106,6 @@ export async function POST(req: NextRequest) {
             parsedCanvasOptions.width > 0 &&
             parsedCanvasOptions.height > 0
         ) {
-            console.log({
-                parsedTextOptions,
-                parsedCanvasOptions
-            });
             const escapeXml = (unsafe: string) => {
                 return unsafe
                     .replace(/&/g, "&amp;")
@@ -127,22 +125,36 @@ export async function POST(req: NextRequest) {
             const textTop = parsedTextOptions.top * scaleY;
             const fontSize = parsedTextOptions.fontSize * scaleX;
 
-            console.log({
-                scaleX,
-                scaleY,
-                fontSize,
-                textLeft,
-                textTop
-            });
+            const fontPath = path.join(
+                process.cwd(),
+                "public/fonts/DejaVuSans.ttf"
+            );
+
+            const fontBase64 = fs.readFileSync(fontPath).toString("base64");
 
             const svgText = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="${targetWidth}" height="${targetHeight}">
-                    <text x="50" y="100" fill="red" font-size="80">
-                        TEST123
-                    </text>
-                </svg>
-            `;
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    width="${targetWidth}"
+                    height="${targetHeight}">
 
+                <style>
+                @font-face {
+                    font-family: "DejaVu";
+                    src: url(data:font/truetype;base64,${fontBase64});
+                }
+                </style>
+
+                <text
+                    x="${textLeft}"
+                    y="${textTop + fontSize}"
+                    fill="${parsedTextOptions.color}"
+                    font-size="${fontSize}px"
+                    font-family="DejaVu"
+                    font-weight="bold"
+                >
+                    ${escapeXml(parsedTextOptions.text)}
+                </text>
+            `;
 
             finalBuffer = await sharp(resizedImageBuffer)
                 .composite([
@@ -184,11 +196,6 @@ export async function POST(req: NextRequest) {
 
         const parsedTags = tags ? tags.split(",").map((t) => t.trim()) : [];
 
-        console.log({
-            resizedSize: resizedImageBuffer.length,
-            finalSize: finalBuffer.length
-        });
-
         const pin = await prisma.pin.create({
             data: {
                 title,
@@ -209,14 +216,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: true, message: "Pin added", pin }, { status: 201 });
 
     } catch (error) {
-        console.error("Create pin error:", error);
-
-        return NextResponse.json(
-            {
-                success: false,
-                message: "Failed to create pin"
-            },
-            { status: 500 }
-        );
+        return NextResponse.json({ success: false, message: "Failed to create pin" }, { status: 500 });
     }
 }
