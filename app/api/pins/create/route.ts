@@ -137,23 +137,25 @@ export async function POST(req: NextRequest) {
                     width="${targetWidth}"
                     height="${targetHeight}">
 
-                <style>
-                @font-face {
-                    font-family: "DejaVu";
-                    src: url(data:font/truetype;base64,${fontBase64});
-                }
-                </style>
+                    <style>
+                    @font-face {
+                        font-family: "DejaVu";
+                        src: url(data:font/truetype;base64,${fontBase64});
+                    }
+                    </style>
 
-                <text
-                    x="${textLeft}"
-                    y="${textTop + fontSize}"
-                    fill="${parsedTextOptions.color}"
-                    font-size="${fontSize}px"
-                    font-family="DejaVu"
-                    font-weight="bold"
-                >
-                    ${escapeXml(parsedTextOptions.text)}
-                </text>
+                    <text
+                        x="${textLeft}"
+                        y="${textTop + fontSize}"
+                        fill="${parsedTextOptions.color}"
+                        font-size="${fontSize}px"
+                        font-family="DejaVu"
+                        font-weight="bold"
+                    >
+                        ${escapeXml(parsedTextOptions.text)}
+                    </text>
+
+                </svg>
             `;
 
             finalBuffer = await sharp(resizedImageBuffer)
@@ -216,6 +218,14 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: true, message: "Pin added", pin }, { status: 201 });
 
     } catch (error) {
-        return NextResponse.json({ success: false, message: "Failed to create pin" }, { status: 500 });
+        console.error("Create pin error:", error);
+
+        return NextResponse.json(
+            {
+                success: false,
+                message: error instanceof Error ? error.message : "Failed to create pin"
+            },
+            { status: 500 }
+        );
     }
 }
