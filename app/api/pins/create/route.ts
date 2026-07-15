@@ -136,17 +136,14 @@ export async function POST(req: NextRequest) {
             });
 
             const svgText = `
-                <svg width="${targetWidth}" height="${targetHeight}">
-                    <text
-                        x="${textLeft}"
-                        y="${textTop + fontSize}"
-                        fill="${parsedTextOptions.color}"
-                        font-size="${fontSize}"
-                        font-weight="bold"
-                        font-family="sans-serif"
-                    >
-                        <tspan>${escapeXml(parsedTextOptions.text)}</tspan>
-                    </text>
+                <svg  xmlns="http://www.w3.org/2000/svg" width="${targetWidth}" height="${targetHeight}">
+                    <rect
+                        x="132"
+                        y="24"
+                        width="200"
+                        height="100"
+                        fill="red"
+                    />
                 </svg>
             `;
 
