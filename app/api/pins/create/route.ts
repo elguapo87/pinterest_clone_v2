@@ -137,26 +137,20 @@ export async function POST(req: NextRequest) {
                     width="${targetWidth}"
                     height="${targetHeight}">
 
-                    <style>
-                    @font-face {
-                        font-family: "DejaVu";
-                        src: url(data:font/truetype;base64,${fontBase64});
-                    }
-                    </style>
-
                     <text
                         x="${textLeft}"
                         y="${textTop + fontSize}"
                         fill="${parsedTextOptions.color}"
-                        font-size="${fontSize}px"
-                        font-family="DejaVu"
-                        font-weight="bold"
-                    >
+                        font-size="${fontSize}"
+                        font-family="sans-serif"
+                        font-weight="bold">
                         ${escapeXml(parsedTextOptions.text)}
                     </text>
 
                 </svg>
             `;
+
+            console.log(svgText);
 
             finalBuffer = await sharp(resizedImageBuffer)
                 .composite([
