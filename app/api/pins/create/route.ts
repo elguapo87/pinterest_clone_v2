@@ -138,13 +138,11 @@ export async function POST(req: NextRequest) {
                     height="${targetHeight}">
 
                     <text
-                        x="${textLeft}"
-                        y="${textTop + fontSize}"
-                        fill="${parsedTextOptions.color}"
-                        font-size="${fontSize}"
-                        font-family="sans-serif"
-                        font-weight="bold">
-                        ${escapeXml(parsedTextOptions.text)}
+                        x="50"
+                        y="100"
+                        fill="red"
+                        font-size="80">
+                        TEST123
                     </text>
 
                 </svg>
