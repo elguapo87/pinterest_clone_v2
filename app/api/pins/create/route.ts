@@ -137,21 +137,15 @@ export async function POST(req: NextRequest) {
 
             const svgText = `
                 <svg width="${targetWidth}" height="${targetHeight}">
-                    <style>
-                        .title {
-                            fill: ${parsedTextOptions.color};
-                            font-size: ${fontSize}px;
-                            font-weight: bold;
-                            font-family: DejaVu Sans;
-                        }
-                    </style>
-
                     <text
                         x="${textLeft}"
                         y="${textTop + fontSize}"
-                        class="title"
+                        fill="${parsedTextOptions.color}"
+                        font-size="${fontSize}"
+                        font-weight="bold"
+                        font-family="sans-serif"
                     >
-                        ${escapeXml(parsedTextOptions.text)}
+                        <tspan>${escapeXml(parsedTextOptions.text)}</tspan>
                     </text>
                 </svg>
             `;
