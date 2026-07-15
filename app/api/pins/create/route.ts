@@ -137,13 +137,8 @@ export async function POST(req: NextRequest) {
 
             const svgText = `
                 <svg xmlns="http://www.w3.org/2000/svg" width="${targetWidth}" height="${targetHeight}">
-                    <text 
-                        x="50" 
-                        y="100" 
-                        fill="black" 
-                        font-size="80"
-                    >
-                        TEST
+                    <text x="50" y="100" fill="red" font-size="80">
+                        TEST123
                     </text>
                 </svg>
             `;
