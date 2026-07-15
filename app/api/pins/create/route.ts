@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { userAuth } from "@/lib/userAuth";
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
+import fs from "fs";
 
 export async function POST(req: NextRequest) {
     try {
@@ -104,6 +105,10 @@ export async function POST(req: NextRequest) {
             parsedCanvasOptions.width > 0 &&
             parsedCanvasOptions.height > 0
         ) {
+            console.log({
+                parsedTextOptions,
+                parsedCanvasOptions
+            });
             const escapeXml = (unsafe: string) => {
                 return unsafe
                     .replace(/&/g, "&amp;")
@@ -130,7 +135,7 @@ export async function POST(req: NextRequest) {
                             fill: ${parsedTextOptions.color};
                             font-size: ${fontSize}px;
                             font-weight: bold;
-                            font-family: Arial, sans-serif;
+                            font-family: DejaVu Sans;
                         }
                     </style>
 
@@ -143,6 +148,8 @@ export async function POST(req: NextRequest) {
                     </text>
                 </svg>
             `;
+
+            fs.writeFileSync("debug.svg", svgText);
 
             finalBuffer = await sharp(resizedImageBuffer)
                 .composite([
