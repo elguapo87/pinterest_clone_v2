@@ -137,10 +137,18 @@ export async function POST(req: NextRequest) {
                     width="${targetWidth}"
                     height="${targetHeight}">
 
-                    <text
+                    <rect
                         x="50"
-                        y="100"
+                        y="50"
+                        width="300"
+                        height="150"
                         fill="red"
+                    />
+
+                    <text
+                        x="70"
+                        y="140"
+                        fill="white"
                         font-size="80">
                         TEST123
                     </text>
