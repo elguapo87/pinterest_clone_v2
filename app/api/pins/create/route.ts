@@ -133,27 +133,14 @@ export async function POST(req: NextRequest) {
             const fontBase64 = fs.readFileSync(fontPath).toString("base64");
 
             const svgText = `
-                <svg xmlns="http://www.w3.org/2000/svg"
-                    width="${targetWidth}"
-                    height="${targetHeight}">
-
-                    <rect
-                        x="50"
-                        y="50"
-                        width="300"
-                        height="150"
-                        fill="red"
-                    />
-
-                    <text
-                        x="70"
-                        y="140"
-                        fill="white"
-                        font-size="80">
-                        TEST123
-                    </text>
-
-                </svg>
+                <text
+                    x="50"
+                    y="100"
+                    fill="red"
+                    font-size="80"
+                    font-family="Arial">
+                    TEST123
+                </text>
             `;
 
             console.log(svgText);
