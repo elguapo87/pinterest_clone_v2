@@ -3,8 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { userAuth } from "@/lib/userAuth";
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
-import fs from "fs";
-import path from "path";
+import { createCanvas } from "@napi-rs/canvas";
 
 export async function POST(req: NextRequest) {
     try {
@@ -125,30 +124,25 @@ export async function POST(req: NextRequest) {
             const textTop = parsedTextOptions.top * scaleY;
             const fontSize = parsedTextOptions.fontSize * scaleX;
 
-            const fontPath = path.join(
-                process.cwd(),
-                "public/fonts/DejaVuSans.ttf"
+            const canvas = createCanvas(targetWidth, targetHeight);
+
+            const ctx = canvas.getContext("2d");
+
+            ctx.font = `bold ${fontSize}px sans-serif`;
+            ctx.fillStyle = parsedTextOptions.color;
+
+            ctx.fillText(
+                parsedTextOptions.text,
+                textLeft,
+                textTop + fontSize
             );
 
-            const fontBase64 = fs.readFileSync(fontPath).toString("base64");
-
-            const svgText = `
-                <text
-                    x="50"
-                    y="100"
-                    fill="red"
-                    font-size="80"
-                    font-family="Arial">
-                    TEST123
-                </text>
-            `;
-
-            console.log(svgText);
+            const textBuffer = canvas.toBuffer("image/png");
 
             finalBuffer = await sharp(resizedImageBuffer)
                 .composite([
                     {
-                        input: Buffer.from(svgText),
+                        input: textBuffer,
                         top: 0,
                         left: 0,
                     }
