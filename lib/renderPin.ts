@@ -140,7 +140,7 @@ export async function renderPin({
 
         const fontSize = textOptions.fontSize * scaleX;
 
-        ctx.font = `bold ${fontSize}px sans-serif`;
+        ctx.font = `${fontSize}px sans-serif`;
         ctx.fillStyle = textOptions.color;
         ctx.textBaseline = "top";
         ctx.textAlign = "left";

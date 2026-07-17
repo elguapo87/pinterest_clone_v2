@@ -60,8 +60,6 @@ const EditPinWrapper = () => {
 
     const [loading, setLoading] = useState(false);
 
-    const [isEditing, setIsEditing] = useState(false);
-
     const router = useRouter();
 
     useEffect(() => {
@@ -212,12 +210,19 @@ const EditPinWrapper = () => {
 
                         >
                             {previewImage && (
-                                <div className="group relative w-93.75 h-143.5 max-[475px]:w-full">
+                                <div
+                                    className="group relative w-93.75"
+                                    style={{
+                                        aspectRatio: previewImage
+                                            ? `${previewImage.width} / ${previewImage.height}`
+                                            : "1 / 1",
+                                    }}
+                                >
                                     <Image
                                         src={previewImage.url}
                                         alt="Preview Image"
                                         fill
-                                        className="object-cover rounded-4xl"
+                                        className="object-contain rounded-4xl"
                                     />
 
                                     <div
@@ -232,9 +237,9 @@ const EditPinWrapper = () => {
                                             <Image
                                                 src="/upload.svg"
                                                 alt="Replace Image"
-                                                width={200}
-                                                height={200}
-                                                className="z-10 size-50"
+                                                width={100}
+                                                height={100}
+                                                className="z-10 size-25"
                                             />
                                             <input
                                                 onChange={(e) => setMedia(e.target.files && e.target.files[0])}
