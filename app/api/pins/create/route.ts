@@ -2,8 +2,6 @@ import imageKit from "@/config/imageKit";
 import { prisma } from "@/lib/prisma";
 import { userAuth } from "@/lib/userAuth";
 import { NextRequest, NextResponse } from "next/server";
-import sharp from "sharp";
-import { createCanvas } from "@napi-rs/canvas";
 
 export async function POST(req: NextRequest) {
     try {
@@ -17,7 +15,6 @@ export async function POST(req: NextRequest) {
         const tags = form.get("tags") as string;
         const media = form.get("media") as File | null;
         const isSensitive = form.get("isSensitive") === "true";
-
         const textOptions = form.get("textOptions") as string;
         const canvasOptions = form.get("canvasOptions") as string;
 
@@ -30,140 +27,19 @@ export async function POST(req: NextRequest) {
 
         if (!media) {
             return NextResponse.json({ success: false, message: "Image is required" }, { status: 400 });
+        } else {
+            const bytes = await media.arrayBuffer();
+            const buffer = Buffer.from(bytes);
+
+            const uploadRes = await imageKit.upload({
+                file: buffer,
+                fileName: `pin_${user.id}_${Date.now()}_${media.name}`,
+                folder: "/pinterest_clone/pins"
+            });
+            mediaUrl = uploadRes.url;
+            width = uploadRes.width;
+            height = uploadRes.height;
         }
-
-        const bytes = await media.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-
-        // ORIGINAL IMAGE METADATA
-        const metadata = await sharp(buffer).metadata();
-
-        const originalWidth = metadata.width || 0;
-        const originalHeight = metadata.height || 0;
-
-        const originalOrientation = originalHeight > originalWidth ? "portrait" : "landscape";
-
-        // TARGET DIMENSIONS
-        let targetWidth = originalWidth;
-        let targetHeight = originalHeight;
-
-        if (parsedCanvasOptions) {
-            if (parsedCanvasOptions.size !== "original") {
-
-                const [w, h] =
-                    parsedCanvasOptions.size
-                        .split(":")
-                        .map(Number);
-
-                const targetAspectRatio = w / h;
-
-                if (
-                    parsedCanvasOptions.orientation === "portrait"
-                ) {
-                    targetHeight = originalHeight;
-                    targetWidth = Math.round(
-                        targetHeight * targetAspectRatio
-                    );
-                } else {
-                    targetWidth = originalWidth;
-                    targetHeight = Math.round(
-                        targetWidth / targetAspectRatio
-                    );
-                }
-
-            } else {
-                if (
-                    parsedCanvasOptions.orientation !==
-                    originalOrientation
-                ) {
-                    targetWidth = originalHeight;
-                    targetHeight = originalWidth;
-                }
-            }
-        }
-
-        // TRANSFORM IMAGE
-        const resizedImageBuffer = await sharp(buffer)
-            .resize({
-                width: targetWidth,
-                height: targetHeight,
-                fit: "contain",
-                background: parsedCanvasOptions?.backgroundColor || "#ffffff"
-            })
-            .jpeg({
-                quality: 85,
-                mozjpeg: true
-            })
-            .toBuffer();
-
-        let finalBuffer = resizedImageBuffer;
-
-        if (
-            parsedTextOptions?.isVisible &&
-            parsedTextOptions?.text &&
-            parsedCanvasOptions &&
-            parsedCanvasOptions.width > 0 &&
-            parsedCanvasOptions.height > 0
-        ) {
-            const escapeXml = (unsafe: string) => {
-                return unsafe
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;")
-                    .replace(/"/g, "&quot;")
-                    .replace(/'/g, "&apos;");
-            };
-
-            const canvasWidth = parsedCanvasOptions?.width || targetWidth;
-            const canvasHeight = parsedCanvasOptions?.height || targetHeight;
-
-            const scaleX = targetWidth / canvasWidth;
-            const scaleY = targetHeight / canvasHeight;
-
-            const textLeft = parsedTextOptions.left * scaleX;
-            const textTop = parsedTextOptions.top * scaleY;
-            const fontSize = parsedTextOptions.fontSize * scaleX;
-
-            const canvas = createCanvas(targetWidth, targetHeight);
-
-            const ctx = canvas.getContext("2d");
-
-            ctx.font = `bold ${fontSize}px sans-serif`;
-            ctx.fillStyle = parsedTextOptions.color;
-
-            ctx.fillText(
-                parsedTextOptions.text,
-                textLeft,
-                textTop + fontSize
-            );
-
-            const textBuffer = canvas.toBuffer("image/png");
-
-            finalBuffer = await sharp(resizedImageBuffer)
-                .composite([
-                    {
-                        input: textBuffer,
-                        top: 0,
-                        left: 0,
-                    }
-                ])
-                .jpeg({
-                    quality: 80,
-                    mozjpeg: true
-                })
-                .toBuffer();
-        }
-
-        const uploadRes = await imageKit.upload({
-            file: finalBuffer,
-            fileName: `pin_${user.id}_${Date.now()}_${media.name}`,
-            folder: "/pinterest_clone/pins"
-        })
-
-        mediaUrl = uploadRes.url;
-
-        width = targetWidth;
-        height = targetHeight;
 
         let boardId: string | null = null;
 
@@ -180,6 +56,7 @@ export async function POST(req: NextRequest) {
         const parsedTags = tags ? tags.split(",").map((t) => t.trim()) : [];
 
         const pin = await prisma.pin.create({
+
             data: {
                 title,
                 description,
@@ -199,14 +76,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: true, message: "Pin added", pin }, { status: 201 });
 
     } catch (error) {
-        console.error("Create pin error:", error);
-
-        return NextResponse.json(
-            {
-                success: false,
-                message: error instanceof Error ? error.message : "Failed to create pin"
-            },
-            { status: 500 }
-        );
+        return NextResponse.json({ success: false, message: "Failed to create pin" }, { status: 500 });
     }
+
 }

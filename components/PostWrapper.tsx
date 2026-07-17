@@ -59,6 +59,9 @@ const PostWrapper = () => {
 
     if (!pin) return <Loader />
 
+    console.log(pin.user.avatar);
+    
+
     return (
         <div className="flex justify-center max-[751]:gap-2 gap-8">
             <svg

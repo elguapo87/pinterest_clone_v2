@@ -10,6 +10,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import PinEditor from "./pinEditor/PinEditor";
 import { EditorContext, initialCanvasOptions, initialTextOptions } from "@/context/EditorContext";
+import { renderPin } from "@/lib/renderPin";
 
 type Board = {
     id: string;
@@ -33,6 +34,9 @@ const CreatePageWrapper = () => {
     const [selectedBoard, setSelectedBoard] = useState("");
     const [tags, setTags] = useState("");
     const [isSensitive, setIsSensitive] = useState(false);
+
+    const [renderedFile, setRenderedFile] = useState<File | null>(null);
+    const [renderedPreview, setRenderedPreview] = useState<string | null>(null);
 
     const [previewImage, setPreviewImage] = useState<{
         url: string;
@@ -71,7 +75,26 @@ const CreatePageWrapper = () => {
         e.preventDefault();
 
         if (isEditing) {
+            if (!previewImage) return;
+
+            const file = await renderPin({
+                image: previewImage,
+                textOptions,
+                canvasOptions,
+            });
+
+            setRenderedFile(file);
+
+            if (renderedPreview) {
+                URL.revokeObjectURL(renderedPreview);
+            }
+
+            setRenderedPreview(URL.createObjectURL(file));
+
+            setHasEdited(true);
             setIsEditing(false);
+
+            return;
 
         } else {
             try {
@@ -90,9 +113,17 @@ const CreatePageWrapper = () => {
                     formData.append("canvasOptions", JSON.stringify(canvasOptions));
                 }
 
-                if (media) {
-                    formData.append("media", media);
+                // if (media) {
+                //     formData.append("media", media);
+                // }
+                if (!media || !previewImage) {
+                    toast.error("Please select an image");
+                    return;
                 }
+
+                const fileToUpload = renderedFile ?? media;
+
+                formData.append("media", fileToUpload);
 
                 const { data } = await api.post("/pins/create", formData);
                 if (data.success) {
@@ -140,26 +171,60 @@ const CreatePageWrapper = () => {
 
     }, [media]);
 
+
+    const cancelChanges = () => {
+        const confirm = window.confirm("Are you sure? All chnages will be lost.");
+        if (!confirm) return;
+
+        if (renderedPreview) {
+            URL.revokeObjectURL(renderedPreview);
+        }
+
+        setRenderedFile(null);
+        setRenderedPreview(null);
+
+        setTextOptions(initialTextOptions);
+        setCanvasOptions(initialCanvasOptions);
+
+        setIsEditing(false);
+        setHasEdited(false);
+    };
+
     return (
         <AuthGuard>
             <form onSubmit={handleCreate}>
                 {/* CREATE TOP */}
                 <div className="border-y border-[#e9e9e9] py-4 px-0 flex items-center justify-between">
                     <h1 className="text-[20px] font-medium">{isEditing ? "Design your Pin" : "Create Pin"}</h1>
-                    <button
-                        type="submit"
-                        className="bg-[#e50829] text-white font-medium border-none outline-none py-3 px-4
-                            rounded-4xl cursor-pointer text-[15px] hover:bg-[#c1011e]"
-                        disabled={loading}
-                    >
-                        {
-                            loading
-                                ? "Publishing..."
-                                : isEditing
-                                    ? "Done"
-                                    : "Publish"
-                        }
-                    </button>
+
+                    <div className="flex items-center gap-2 md:gap-3">
+                        {isEditing && (
+                            <div
+                                onClick={cancelChanges}
+                                className="text-black border border-black font-medium px-3.5 py-1.75
+                                    flex items-center rounded-full cursor-pointer text-[15px] 
+                                    hover:bg-[#e50829] hover:text-white hover:border-none"
+                            >
+                                X
+                            </div>
+                        )}
+
+                        <button
+                            type="submit"
+                            className="bg-[#e50829] text-white font-medium border-none outline-none py-3 px-4
+                                rounded-4xl cursor-pointer text-[15px] hover:bg-[#c1011e]"
+                            disabled={loading}
+                        >
+                            {
+                                loading
+                                    ? "Publishing..."
+                                    : isEditing
+                                        ? "Done"
+                                        : "Publish"
+                            }
+                        </button>
+                    </div>
+
                 </div>
 
                 {isEditing && previewImage ? (
@@ -178,13 +243,23 @@ const CreatePageWrapper = () => {
 
                             >
                                 {media ? (
-                                    <div className="relative w-93.75 h-143.5 max-[475px]:w-full">
-                                        <Image
-                                            src={URL.createObjectURL(media)}
-                                            alt="Preview Image"
-                                            fill
-                                            className="object-cover rounded-4xl"
-                                        />
+                                    <div
+                                        className="relative w-93.75"
+                                        style={{
+                                            aspectRatio: previewImage
+                                                ? `${previewImage.width} / ${previewImage.height}`
+                                                : "1 / 1",
+                                        }}
+                                    >
+                                        {(renderedPreview || previewImage?.url) && (
+                                            <Image
+                                                src={renderedPreview || previewImage!.url}
+                                                alt="Preview Image"
+                                                fill
+                                                className="object-contain rounded-4xl"
+                                            />
+
+                                        )}
                                         <div
                                             onClick={() => {
                                                 setIsEditing(true);
@@ -201,9 +276,15 @@ const CreatePageWrapper = () => {
                                             />
                                         </div>
                                         <div
-                                            onClick={(e) => { e.stopPropagation(); setMedia(null); }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setMedia(null);
+                                                setRenderedFile(null);
+                                                setRenderedPreview(null);
+                                            }}
                                             className="absolute top-4 left-4 font-semibold text-gray-800 
-                                            hover:scale-101 cursor-pointer"
+                                                hover:scale-101 cursor-pointer text-xl size-10 bg-stone-100
+                                                rounded-full flex items-center justify-center border border-gray-200"
                                         >
                                             X
                                         </div>
