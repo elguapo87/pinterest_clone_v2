@@ -241,9 +241,17 @@ const ProfilePageWrapper = () => {
             </div>
 
             {type === "created" ? (
-                <Gallery initialPins={profile.pins} />
+                profile.pins.length > 0 ? (
+                    <Gallery initialPins={profile.pins} />
+                ) : (
+                    <p className="text-center text-lg md:text-xl text-gray-600">No created pins yet</p>
+                ) 
             ) : (
-                <Collection boards={profile.boards} />
+                profile.boards.length > 0 ? (
+                    <Collection boards={profile.boards} />
+                ) : (
+                    <p className="text-center text-lg md:text-xl text-gray-600">No created boards yet</p>
+                )
             )}
         </div>
     ) : (

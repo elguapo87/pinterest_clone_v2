@@ -394,12 +394,16 @@ const UpdatePageWrapper = () => {
                 saved.length > 0 ? (
                     <Gallery key="saved" initialPins={saved} fetchSaves={fetchSaves} />
                 ) : (
-                    <h1>No saved pins</h1>
+                    <p className="text-center text-lg md:text-xl text-gray-600">No saved pins</p>
                 )
             )}
 
             {type === "boards" && (
-                <Collection boards={profile.boards} />
+                profile.boards.length > 0 ? (
+                    <Collection boards={profile.boards} />
+                ) : (
+                    <p className="text-center text-lg md:text-xl text-gray-600">No created boards yet</p>
+                )
             )}
 
         </div>
