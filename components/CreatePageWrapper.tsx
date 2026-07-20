@@ -83,18 +83,38 @@ const CreatePageWrapper = () => {
                 canvasOptions,
             });
 
-            setRenderedFile(file);
+            // setRenderedFile(file);
 
-            if (renderedPreview) {
-                URL.revokeObjectURL(renderedPreview);
-            }
+            // if (renderedPreview) {
+            //     URL.revokeObjectURL(renderedPreview);
+            // }
 
-            setRenderedPreview(URL.createObjectURL(file));
+            // setRenderedPreview(URL.createObjectURL(file));
 
-            setHasEdited(true);
-            setIsEditing(false);
+            // setHasEdited(true);
+            // setIsEditing(false);
 
-            return;
+            // return;
+            const url = URL.createObjectURL(file);
+
+            const img = new window.Image();
+
+            img.onload = () => {
+                setRenderedFile(file);
+
+                setPreviewImage({
+                    url,
+                    width: img.width,
+                    height: img.height,
+                });
+
+                setRenderedPreview(url);
+
+                setHasEdited(true);
+                setIsEditing(false);
+            };
+
+            img.src = url;
 
         } else {
             try {
@@ -179,7 +199,6 @@ const CreatePageWrapper = () => {
         if (renderedPreview) {
             URL.revokeObjectURL(renderedPreview);
         }
-
         setRenderedFile(null);
         setRenderedPreview(null);
 
@@ -244,11 +263,15 @@ const CreatePageWrapper = () => {
                             >
                                 {media ? (
                                     <div
-                                        className="relative w-93.75"
+                                        className="relative w-93.75 rounded-4xl overflow-hidden"
                                         style={{
-                                            aspectRatio: previewImage
-                                                ? `${previewImage.width} / ${previewImage.height}`
-                                                : "1 / 1",
+                                            aspectRatio:
+                                                canvasOptions.width && canvasOptions.height
+                                                    ? `${canvasOptions.width} / ${canvasOptions.height}`
+                                                    : previewImage
+                                                        ? `${previewImage.width} / ${previewImage.height}`
+                                                        : "1 / 1",
+                                            backgroundColor: canvasOptions.backgroundColor,
                                         }}
                                     >
                                         {(renderedPreview || previewImage?.url) && (
@@ -256,7 +279,7 @@ const CreatePageWrapper = () => {
                                                 src={renderedPreview || previewImage!.url}
                                                 alt="Preview Image"
                                                 fill
-                                                className="object-contain rounded-4xl"
+                                                className="object-contain rounded-4xl max-h-fit"
                                             />
 
                                         )}
@@ -281,6 +304,8 @@ const CreatePageWrapper = () => {
                                                 setMedia(null);
                                                 setRenderedFile(null);
                                                 setRenderedPreview(null);
+                                                setTextOptions(initialTextOptions);
+                                                setCanvasOptions(initialCanvasOptions);
                                             }}
                                             className="absolute top-4 left-4 font-semibold text-gray-800 
                                                 hover:scale-101 cursor-pointer text-xl size-10 bg-stone-100
