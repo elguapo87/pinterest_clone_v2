@@ -116,7 +116,7 @@ const GalleryItem = ({ pin, fetchSaves }: GalleryProps) => {
     };
 
     return (
-        <div className="relative group break-inside-avoid mb-4" >
+        <Link href={`/pin/${pin.id}`} className="relative group break-inside-avoid mb-4" >
             <ImageKitWrapper
                 src={pin.media}
                 alt="Pin Image"
@@ -126,8 +126,7 @@ const GalleryItem = ({ pin, fetchSaves }: GalleryProps) => {
                 imgWidth={400}
             />
 
-            <Link
-                href={`/pin/${pin.id}`}
+            <div
                 className="hidden group-hover:block absolute w-full h-full top-0 left-0
                     bg-[rgba(0,0,0,0.3)] rounded-2xl"
             />
@@ -176,7 +175,7 @@ const GalleryItem = ({ pin, fetchSaves }: GalleryProps) => {
                     <Image src="/download.svg" alt="Download" width={20} height={20} className="w-5 h-5" />
                 </button>
             </div>
-        </div>
+        </Link>
     )
 }
 
