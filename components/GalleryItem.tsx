@@ -116,7 +116,7 @@ const GalleryItem = ({ pin, fetchSaves }: GalleryProps) => {
     };
 
     return (
-        <Link href={`/pin/${pin.id}`} className="relative group break-inside-avoid mb-4" >
+        <Link href={`/pin/${pin.id}`} className="block relative group break-inside-avoid mb-4" >
             <ImageKitWrapper
                 src={pin.media}
                 alt="Pin Image"

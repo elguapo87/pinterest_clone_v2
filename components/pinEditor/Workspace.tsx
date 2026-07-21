@@ -59,12 +59,44 @@ const Workspace = ({ previewImage }: { previewImage: PinEditorProps }) => {
     });
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setSelectedLayer("text");
+
+    dragging.current = true;
+
+    const touch = e.touches[0];
+
+    offset.current = {
+      x: touch.clientX - textOptions.left,
+      y: touch.clientY - textOptions.top,
+    };
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!dragging.current) return;
+
+    e.preventDefault();
+
+    const touch = e.touches[0];
+
+    changeTextOptions({
+      left: touch.clientX - offset.current.x,
+      top: touch.clientY - offset.current.y,
+    });
+  };
+
+  const handleTouchEnd = () => {
+    dragging.current = false;
+  };
+
   return (
     <div className="flex items-center justify-center bg-[#e9e9e9] py-16 px-0">
       <div
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         ref={containerRef}
         className="relative rounded-4xl overflow-hidden flex items-center justify-center w-full max-w-93.75"
         style={{
@@ -83,9 +115,10 @@ const Workspace = ({ previewImage }: { previewImage: PinEditorProps }) => {
         {textOptions.isVisible && (
           <div
             onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
             ref={itemRef}
             className="absolute z-999 max-w-full border border-dashed border-red-500"
-            style={{ left: textOptions.left, top: textOptions.top }}
+            style={{ left: textOptions.left, top: textOptions.top, touchAction: "none" }}
           >
             <input
               onChange={(e) => changeTextOptions({ text: e.target.value })}
