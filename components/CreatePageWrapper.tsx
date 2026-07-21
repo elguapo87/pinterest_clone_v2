@@ -38,6 +38,12 @@ const CreatePageWrapper = () => {
     const [renderedFile, setRenderedFile] = useState<File | null>(null);
     const [renderedPreview, setRenderedPreview] = useState<string | null>(null);
 
+    const [originalImage, setOriginalImage] = useState<{
+        url: string;
+        width: number;
+        height: number;
+    } | null>(null);
+
     const [previewImage, setPreviewImage] = useState<{
         url: string;
         width: number;
@@ -83,18 +89,6 @@ const CreatePageWrapper = () => {
                 canvasOptions,
             });
 
-            // setRenderedFile(file);
-
-            // if (renderedPreview) {
-            //     URL.revokeObjectURL(renderedPreview);
-            // }
-
-            // setRenderedPreview(URL.createObjectURL(file));
-
-            // setHasEdited(true);
-            // setIsEditing(false);
-
-            // return;
             const url = URL.createObjectURL(file);
 
             const img = new window.Image();
@@ -109,7 +103,6 @@ const CreatePageWrapper = () => {
                 });
 
                 setRenderedPreview(url);
-
                 setHasEdited(true);
                 setIsEditing(false);
             };
@@ -133,9 +126,6 @@ const CreatePageWrapper = () => {
                     formData.append("canvasOptions", JSON.stringify(canvasOptions));
                 }
 
-                // if (media) {
-                //     formData.append("media", media);
-                // }
                 if (!media || !previewImage) {
                     toast.error("Please select an image");
                     return;
@@ -178,11 +168,14 @@ const CreatePageWrapper = () => {
         img.src = imageUrl;
 
         img.onload = () => {
-            setPreviewImage({
+            const image = {
                 url: imageUrl,
                 width: img.width,
-                height: img.height
-            });
+                height: img.height,
+            };
+
+            setOriginalImage(image);
+            setPreviewImage(image);
         };
 
         return () => {
@@ -190,7 +183,6 @@ const CreatePageWrapper = () => {
         }
 
     }, [media]);
-
 
     const cancelChanges = () => {
         const confirm = window.confirm("Are you sure? All chnages will be lost.");
@@ -201,6 +193,8 @@ const CreatePageWrapper = () => {
         }
         setRenderedFile(null);
         setRenderedPreview(null);
+
+        setPreviewImage(originalImage);
 
         setTextOptions(initialTextOptions);
         setCanvasOptions(initialCanvasOptions);
@@ -247,7 +241,7 @@ const CreatePageWrapper = () => {
                 </div>
 
                 {isEditing && previewImage ? (
-                    <PinEditor previewImage={previewImage} />
+                    <PinEditor previewImage={originalImage} />
                 ) : (
                     < div
                         className="mt-8 flex justify-center gap-16 max-[1104px]:flex-col
@@ -281,12 +275,11 @@ const CreatePageWrapper = () => {
                                                 fill
                                                 className="object-contain rounded-4xl max-h-fit"
                                             />
-
                                         )}
                                         <div
                                             onClick={() => {
                                                 setIsEditing(true);
-                                                setHasEdited(true);
+                                                // setHasEdited(true);
                                             }}
                                             className="absolute top-4 right-4 bg-white flex items-center justify-center
                                             p-1.5 rounded-full cursor-pointer w-10 h-10"
