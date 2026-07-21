@@ -123,12 +123,14 @@ const Comments = ({ pinId }: { pinId: string }) => {
                             width={32}
                             height={32}
                             imgWidth={32}
-                            className="w-8 h-8 rounded-full aspect-square object-cover"
+                            className="size-7 md:size-8 rounded-full aspect-square object-cover"
                         />
                         {/* COMMENT CONTENT */}
                         <div className="flex flex-col">
                             <span className="text-sm text-slate-700 font-semibold">{comment.user.username}</span>
-                            <p className="text-[15px] font-medium text-slate-800">{comment.description}</p>
+                            <p className="text-[14px] md:text-[15px] font-medium text-slate-800">
+                                {comment.description}
+                            </p>
                             <span className="text-[10px] font-light text-slate-600">{format(comment.createdAt)}</span>
                         </div>
                         {user?.id === comment.userId && (
@@ -150,7 +152,11 @@ const Comments = ({ pinId }: { pinId: string }) => {
             </div>
 
             {user ? (
-                <form onSubmit={handleCreate} className="relative bg-[#f1f1f1] p-4 rounded-4xl items-center gap-4">
+                <form 
+                    onSubmit={handleCreate} 
+                    className="relative bg-[#f1f1f1] max-md:px-4 max-md:py-2 md:p-4 rounded-4xl
+                        items-center"
+                >
                     <textarea
                         onChange={(e) => setDescription(e.target.value)}
                         value={description}
@@ -160,12 +166,13 @@ const Comments = ({ pinId }: { pinId: string }) => {
                                 handleCreate(e);
                             }
                         }}
-                        className="w-full flex-1 border-none outline-none bg-transparent text-[16px] resize-none"
+                        className="w-full flex-1 border-none outline-none bg-transparent text-[14px]
+                            md:text-[16px] resize-none"
                         rows={1}
                         placeholder="Add a comment"
                     />
                     {/* EMOJI */}
-                    <div className="cursor-pointer text-[20px] relative" ref={emojiRef}>
+                    <div className="cursor-pointer text-[17px] md:text-[20px] relative" ref={emojiRef}>
                         <div onClick={() => setOpen(prev => !prev)}>😀</div>
 
                         {open && (

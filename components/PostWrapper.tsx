@@ -96,7 +96,7 @@ const PostWrapper = () => {
                                 : ""}`}
                     />
                 </div>
-                <div className="flex-1 h-full flex flex-col gap-8 p-4 overflow-hidden">
+                <div className="flex-1 h-full flex flex-col gap-4 md:gap-8 p-2 md:p-4 overflow-hidden">
                     <PostInteractions
                         pinId={id}
                         pinOwnerId={pin.user.id}

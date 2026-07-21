@@ -286,7 +286,7 @@ const PostInteractions = ({ pinId, pinOwnerId, pinMedia, isSensitive, revealed, 
             </div>
             <button
                 onClick={handleSave}
-                className="bg-[#e50829] text-white border-none rounded-3xl px-4 py-3
+                className="bg-[#e50829] text-white border-none rounded-3xl px-2 py-1.5 md:px-4 md:py-3
                     text-sm font-bold cursor-pointer"
             >
                 {saved ? "Saved" : "Save"}
