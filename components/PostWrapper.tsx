@@ -36,6 +36,8 @@ const PostWrapper = () => {
     const [pin, setPin] = useState<Pin | null>(null);
     const [revealed, setRevealed] = useState(false);
 
+    const [expanded, setExpanded] = useState(false);
+
     const router = useRouter();
 
     useEffect(() => {
@@ -59,8 +61,12 @@ const PostWrapper = () => {
 
     if (!pin) return <Loader />
 
-    console.log(pin.user.avatar);
-    
+    const MAX_DESCRIPTION_LENGTH = 60;
+    const isLongDescription = pin.description.length > MAX_DESCRIPTION_LENGTH; 
+
+    const shortDescription = isLongDescription
+        ? pin.description.slice(0, MAX_DESCRIPTION_LENGTH)
+        : pin.description;
 
     return (
         <div className="flex justify-center max-[751]:gap-2 gap-8">
@@ -96,7 +102,34 @@ const PostWrapper = () => {
                                 : ""}`}
                     />
                 </div>
+
                 <div className="flex-1 h-full flex flex-col gap-4 md:gap-8 p-2 md:p-4 overflow-hidden">
+                    <div className="flex flex-col gap-2">
+                        {pin.title && (
+                            <h1 className="text-slate-700 text-base md:text-lg">{pin.title}</h1>
+                        )}
+
+                        {pin.description && (
+                            <p className="text-sm md:text-base text-slate-600">
+                                {expanded ? pin.description : shortDescription}
+
+                                {!expanded && isLongDescription && "..."}
+
+                                {" "}
+
+                                {isLongDescription && (
+                                    <button
+                                        onClick={() => setExpanded(prev => !prev)}
+                                        className="mt-1 text-xs font-medium text-slate-700
+                                            hover:underline cursor-pointer"
+                                    >
+                                        {expanded ? "show less" : "show more"}
+                                    </button>
+                                )}
+                            </p>
+                        )}
+
+                    </div>
                     <PostInteractions
                         pinId={id}
                         pinOwnerId={pin.user.id}

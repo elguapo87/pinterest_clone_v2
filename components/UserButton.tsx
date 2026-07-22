@@ -50,6 +50,7 @@ const UserButton = ({ showSearch }: { showSearch: boolean }) => {
                         >
                             <Link
                                 href={`/profile/edit/${user.username}`}
+                                onClick={() => setOpen(false)}
                                 className="cursor-pointer p-2 rounded-lg hover:bg-[#f1f1f1] text-gray-800"
                             >
                                 Profile
