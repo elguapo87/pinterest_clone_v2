@@ -143,7 +143,10 @@ const GalleryItem = ({ pin, fetchSaves }: GalleryProps) => {
             <div className="hidden group-hover:flex items-center gap-2 absolute bottom-4 right-4">
                 {pin.isSensitive && (
                     <button
-                        onClick={() => setRevealed(prev => !prev)}
+                        onClick={(e) => {
+                            setRevealed(prev => !prev);
+                            e.preventDefault();
+                        }}
                         className="w-8 h-8 rounded-full bg-white flex items-center justify-center
                         border-none cursor-pointer hover:bg-[#f1f1f1]"
                     >
@@ -157,14 +160,20 @@ const GalleryItem = ({ pin, fetchSaves }: GalleryProps) => {
                     </button>
                 )}
                 <button
-                    onClick={handleShare}
+                    onClick={(e) => {
+                        handleShare();
+                        e.preventDefault();
+                    }}
                     className="w-8 h-8 rounded-full bg-white flex items-center justify-center
                         border-none cursor-pointer hover:bg-[#f1f1f1]"
                 >
                     <Image src="/share.svg" alt="Share" width={20} height={20} className="w-5 h-5" />
                 </button>
                 <button
-                    onClick={handleDownload}
+                    onClick={(e) => {
+                        handleDownload();
+                        e.preventDefault();
+                    }}
                     className={`w-8 h-8 rounded-full bg-white flex items-center justify-center
                         border-none hover:bg-[#f1f1f1] 
                         ${pin.isSensitive && !revealed 
