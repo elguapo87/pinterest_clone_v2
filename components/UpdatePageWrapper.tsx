@@ -253,10 +253,17 @@ const UpdatePageWrapper = () => {
                     </label>
                     <input
                         onChange={(e) => {
-                            if (e.target.files) {
-                                setAvatar(e.target.files[0]);
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
+                            if (file.size > MAX_FILE_SIZE) {
+                                toast.error("Image must be smaller than 10 MB.");
+                                e.target.value = "";
+                                return;
                             }
 
+                            setAvatar(file);
                             setEditingField("avatar");
                         }}
                         id="avatarUpload"

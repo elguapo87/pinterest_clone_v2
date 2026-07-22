@@ -242,7 +242,19 @@ const EditPinWrapper = () => {
                                                 className="z-10 size-25"
                                             />
                                             <input
-                                                onChange={(e) => setMedia(e.target.files && e.target.files[0])}
+                                                onChange={(e) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (!file) return;
+                                                    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
+                                                    if (file.size > MAX_FILE_SIZE) {
+                                                        toast.error("Image must be smaller than 10 MB.");
+                                                        e.target.value = "";
+                                                        return;
+                                                    }
+
+                                                    setMedia(file);
+                                                }}
                                                 type="file"
                                                 accept="image/*"
                                                 hidden

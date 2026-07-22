@@ -315,9 +315,17 @@ const CreatePageWrapper = () => {
                                         >
                                             <input
                                                 onChange={(e) => {
-                                                    if (e.target.files) {
-                                                        setMedia(e.target.files[0])
+                                                    const file = e.target.files?.[0];
+                                                    if (!file) return;
+                                                    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
+                                                    if (file.size > MAX_FILE_SIZE) {
+                                                        toast.error("Image must be smaller than 10 MB.");
+                                                        e.target.value = "";
+                                                        return;
                                                     }
+
+                                                    setMedia(file);
                                                 }}
                                                 type="file"
                                                 accept="image/png, image/jpeg"
@@ -334,7 +342,7 @@ const CreatePageWrapper = () => {
                                             <span>Chose a file</span>
                                         </label>
                                         <div className="absolute bottom-8 text-[13px] text-center text-gray-600">
-                                            We recommend uing high quality .jpg files less then 20 files less then 200 MB
+                                            We recommend high-quality JPG or PNG images under 10 MB.
                                         </div>
                                     </>
                                 )}
