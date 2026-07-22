@@ -104,7 +104,7 @@ const PostWrapper = () => {
                 </div>
 
                 <div className="flex-1 h-full flex flex-col gap-4 md:gap-8 p-2 md:p-4 overflow-hidden">
-                    <div className="flex flex-col gap-2">
+                    <div className="no-scrollbar flex flex-col gap-2 max-[751px]:max-h-19 max-[751px]:overflow-y-auto">
                         {pin.title && (
                             <h1 className="text-slate-700 text-base md:text-lg">{pin.title}</h1>
                         )}
@@ -128,7 +128,6 @@ const PostWrapper = () => {
                                 )}
                             </p>
                         )}
-
                     </div>
                     <PostInteractions
                         pinId={id}
