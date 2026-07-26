@@ -69,6 +69,7 @@ const UpdatePageWrapper = () => {
     const [profile, setProfile] = useState<Profile | null>(null);
     const [type, setType] = useState("created");
     const [loading, setLoading] = useState(false);
+    const [saveLoading, setSaveLoading] = useState(false);
     const [followersCount, setFollowersCount] = useState(0);
     const [followingsCount, setFollowingsCount] = useState(0);
 
@@ -136,6 +137,8 @@ const UpdatePageWrapper = () => {
     const handleSubmit = async (e: React.SyntheticEvent) => {
         e.preventDefault();
 
+        setSaveLoading(true);
+
         try {
             const formData = new FormData();
 
@@ -191,6 +194,8 @@ const UpdatePageWrapper = () => {
             if (axios.isAxiosError(error)) {
                 toast.error(error.response?.data?.message);
             }
+        } finally {
+            setSaveLoading(false);
         }
     };
 
@@ -354,11 +359,15 @@ const UpdatePageWrapper = () => {
                 {editingField !== null && (
                     <button
                         type="submit"
-                        className="border-none outline-none bg-green-600 text-stone-50 rounded-lg 
+                        className={`border-none outline-none bg-green-600 text-stone-50 rounded-lg 
                             px-3 py-1 cursor-pointer hover:bg-green-500 hover:text-white
-                            transition-all duration-300 w-[60%]"
+                            transition-all duration-300 w-[60%] 
+                            ${saveLoading 
+                                ? "cursor-not-allowed opacity-50"
+                                : ""}`}
+                        disabled={saveLoading}
                     >
-                        Save
+                        {saveLoading ? "Saving..." : "Save"}
                     </button>
                 )}
             </form>
