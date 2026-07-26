@@ -132,7 +132,10 @@ const GalleryItem = ({ pin, fetchSaves }: GalleryProps) => {
             />
 
             <button
-                onClick={handleSave}
+                onClick={(e) => {
+                    handleSave();
+                    e.preventDefault();
+                }}
                 className="hidden group-hover:block bg-[#e50829] text-white rounded-3xl
                     py-3 px-4 font-medium cursor-pointer w-max absolute top-4 right-4
                     border-none text-sm"
