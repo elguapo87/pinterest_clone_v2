@@ -253,7 +253,7 @@ const UpdatePageWrapper = () => {
                     alt="Delete Icon"
                     width={30}
                     height={30}
-                    className="size-7.5 absolute top-0 right-0 transform -translate-y-1/4 -translate-x-1/2
+                    className="size-7.5 absolute top-0 left-0 transform -translate-y-1/4 translate-x-full
                         cursor-pointer"
                 />
                 <div className="relative group size-25">
