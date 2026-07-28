@@ -62,7 +62,7 @@ type SavedPin = {
 const UpdatePageWrapper = () => {
     const authContext = useContext(AuthContext);
     if (!authContext) throw new Error("UserButton must be within AuthContextProvider");
-    const { setUser } = authContext;
+    const { setUser, user } = authContext;
 
     const { username: profileUsername } = useParams() as { username: string };
 
@@ -220,11 +220,42 @@ const UpdatePageWrapper = () => {
 
     const saved = savedPins.map((save) => save.pin);
 
+    const deleteAccount = async () => {
+        const confirm
+            = window.confirm("Are you sure you want to delete accout, this action cannot be undone after click?");
+
+        if (!confirm) return;
+
+        try {
+            const {data} = await api.delete("/user/delete");
+            
+            if (data.success) {
+                setUser(null);
+                toast.success(data.message);
+                router.replace("/");
+            }
+
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                toast.error(error.response?.data?.message);
+            }
+        }
+    }
+
     if (!profile && loading) return null;
 
     return profile ? (
         <div className="flex flex-col items-center gap-4">
-            <form onSubmit={handleSubmit} className="flex flex-col items-center gap-4">
+            <form onSubmit={handleSubmit} className="relative flex flex-col items-center gap-4">
+                <Image
+                    onClick={deleteAccount}
+                    src="/delete_profile.svg"
+                    alt="Delete Icon"
+                    width={30}
+                    height={30}
+                    className="size-7.5 absolute top-0 right-0 transform -translate-y-1/4 -translate-x-1/2
+                        cursor-pointer"
+                />
                 <div className="relative group size-25">
                     <Image
                         src={
@@ -362,7 +393,7 @@ const UpdatePageWrapper = () => {
                         className={`border-none outline-none bg-green-600 text-stone-50 rounded-lg 
                             px-3 py-1 cursor-pointer hover:bg-green-500 hover:text-white
                             transition-all duration-300 w-[60%] 
-                            ${saveLoading 
+                            ${saveLoading
                                 ? "cursor-not-allowed opacity-50"
                                 : ""}`}
                         disabled={saveLoading}
